@@ -39,6 +39,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
 
     def navigation_version = '2.4.3'
     implementation "androidx.navigation:navigation-fragment-ktx:${navigation_version}"
