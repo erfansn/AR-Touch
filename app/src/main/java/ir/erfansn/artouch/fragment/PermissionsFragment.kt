@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import ir.erfansn.artouch.R
 import ir.erfansn.artouch.databinding.FragmentPermissionsBinding
 import ir.erfansn.artouch.get
@@ -39,7 +40,7 @@ class PermissionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (isCameraPermissionGranted) {
-            // TODO: Navigate to CameraFragment
+            findNavController().navigate(R.id.action_permissionsFragment_to_cameraFragment)
         }
     }
 
@@ -94,7 +95,7 @@ class PermissionsFragment : Fragment() {
     private val requestCameraPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                // TODO: Navigate to CameraFragment
+                findNavController().navigate(R.id.action_permissionsFragment_to_cameraFragment)
                 Log.i(TAG, "Camera permission granted")
             } else {
                 Log.i(TAG, "Camera permission denied")

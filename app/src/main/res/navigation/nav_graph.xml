@@ -3,11 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/permissionsFragment">
+    app:startDestination="@id/permissions_fragment">
 
     <fragment
-        android:id="@+id/permissionsFragment"
+        android:id="@+id/permissions_fragment"
         android:name="ir.erfansn.artouch.fragment.PermissionsFragment"
         android:label="Permissions Fragment"
-        tools:layout="@layout/fragment_permissions"/>
+        tools:layout="@layout/fragment_permissions">
+        <action
+            android:id="@+id/action_permissionsFragment_to_cameraFragment"
+            app:destination="@id/camera_fragment"
+            app:popUpTo="@id/nav_graph" />
+    </fragment>
+    <fragment
+        android:id="@+id/camera_fragment"
+        android:name="ir.erfansn.artouch.fragment.CameraFragment"
+        android:label="Camera Fragment"
+        tools:layout="@layout/fragment_camera">
+        <action
+            android:id="@+id/action_cameraFragment_to_permissionsFragment"
+            app:destination="@id/permissions_fragment" />
+    </fragment>
 </navigation>
