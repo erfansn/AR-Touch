@@ -34,6 +34,7 @@ dependencies {
     implementation libs.androidx.appcompat
 
     implementation libs.google.android.material
+    implementation libs.google.mediapipe.tasks.vision
 
     testImplementation libs.junit4
     androidTestImplementation libs.androidx.test.ext
