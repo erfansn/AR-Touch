@@ -1,6 +1,6 @@
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    alias libs.plugins.android.application
+    alias libs.plugins.kotlin.android
 }
 
 android {
@@ -36,23 +36,16 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.10.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
-    implementation 'androidx.concurrent:concurrent-futures-ktx:1.1.0'
+    implementation libs.androidx.core
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.lifecycle.viewModel
+    implementation libs.androidx.concurrent.futures
+    implementation libs.bundles.navigation
+    implementation libs.bundles.camerax
 
-    def navigation_version = '2.5.3'
-    implementation "androidx.navigation:navigation-fragment-ktx:${navigation_version}"
-    implementation "androidx.navigation:navigation-ui-ktx:${navigation_version}"
+    implementation libs.google.android.material
 
-    def camerax_version = '1.3.0-alpha06'
-    implementation "androidx.camera:camera-core:${camerax_version}"
-    implementation "androidx.camera:camera-camera2:${camerax_version}"
-    implementation "androidx.camera:camera-view:${camerax_version}"
-    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
-
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    testImplementation libs.junit4
+    androidTestImplementation libs.androidx.test.ext
+    androidTestImplementation libs.androidx.test.espresso.core
 }
