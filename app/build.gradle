@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'ir.erfansn.artouch'
-    compileSdk 33
+    compileSdk sdk.versions.compile.get().toInteger()
 
     defaultConfig {
         applicationId "ir.erfansn.artouch"
-        minSdk 24
-        targetSdk 33
+        minSdk sdk.versions.min.get().toInteger()
+        targetSdk sdk.versions.target.get().toInteger()
         versionCode 1
         versionName "1.0"
 

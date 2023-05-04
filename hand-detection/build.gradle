@@ -5,11 +5,10 @@ plugins {
 
 android {
     namespace 'ir.erfansn.artouch.handdetection'
-    compileSdk 33
+    compileSdk sdk.versions.compile.get().toInteger()
 
     defaultConfig {
-        minSdk 24
-        targetSdk 33
+        minSdk sdk.versions.min.get().toInteger()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"

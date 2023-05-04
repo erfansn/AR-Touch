@@ -11,6 +11,14 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
+
+    versionCatalogs {
+        create("sdk") {
+            version("compile", "33")
+            version("min", "24")
+            version("target", "33")
+        }
+    }
 }
 rootProject.name = "AR Touch"
 include ':app'
