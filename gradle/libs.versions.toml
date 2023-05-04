@@ -21,10 +21,10 @@ google-android-material = { group = "com.google.android.material", name = "mater
 androidx-concurrent-futures = { group = "androidx.concurrent", name = "concurrent-futures-ktx", version.ref = "androidxConcurrentFutures" }
 androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment-ktx" }
 androidx-navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "androidxNavigation" }
-androidx-camera-core = { group = "androidx.camerax", name = "camera-core", version.ref = "androidxCameraX" }
-androidx-camera-camera2 = { group = "androidx.camerax", name = "camera-camera2", version.ref = "androidxCameraX" }
-androidx-camera-view = { group = "androidx.camerax", name = "camera-view", version.ref = "androidxCameraX" }
-androidx-camera-lifecycle = { group = "androidx.camerax", name = "camera-lifecycle", version.ref = "androidxCameraX" }
+androidx-camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "androidxCameraX" }
+androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "androidxCameraX" }
+androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "androidxCameraX" }
+androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "androidxCameraX" }
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
 androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExt" }
