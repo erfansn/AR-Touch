@@ -31,11 +31,11 @@ android {
 
 dependencies {
     implementation libs.androidx.core
-    implementation libs.androidx.appcompat
     implementation libs.androidx.camera.core
 
-    implementation libs.google.android.material
     implementation libs.google.mediapipe.tasks.vision
+
+    implementation libs.kotlinx.coroutines
 
     testImplementation libs.junit4
     androidTestImplementation libs.androidx.test.ext

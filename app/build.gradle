@@ -33,6 +33,11 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    packagingOptions {
+        // DebugProbesKt.bin is not used when debugging on Android.
+        resources.excludes += "DebugProbesKt.bin"
+    }
 }
 
 dependencies {
