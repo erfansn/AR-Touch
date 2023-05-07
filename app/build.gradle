@@ -41,10 +41,14 @@ android {
 }
 
 dependencies {
+    implementation project(':hand-detection')
     implementation libs.androidx.core
     implementation libs.androidx.appcompat
     implementation libs.androidx.lifecycle.viewModel
     implementation libs.androidx.concurrent.futures
+
+    implementation libs.google.android.material
+
     implementation libs.bundles.navigation
     implementation libs.bundles.camerax
 
