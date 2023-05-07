@@ -1,4 +1,4 @@
-package ir.erfansn.artouch.handdetection
+package ir.erfansn.artouch.detector
 
 import android.content.Context
 import android.graphics.Canvas

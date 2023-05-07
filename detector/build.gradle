@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'ir.erfansn.artouch.handdetection'
+    namespace 'ir.erfansn.artouch.detector'
     compileSdk sdk.versions.compile.get().toInteger()
 
     defaultConfig {
