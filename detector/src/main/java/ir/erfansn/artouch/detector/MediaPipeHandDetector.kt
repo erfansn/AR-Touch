@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.flowOn
 class MediaPipeHandDetector(
     context: Context,
     defaultDispatcher: CoroutineDispatcher = Dispatchers.Default,
-) : HandDetector {
+) : ObjectDetector<HandDetectionResult> {
 
     private var handLandmarker: HandLandmarker? = null
 

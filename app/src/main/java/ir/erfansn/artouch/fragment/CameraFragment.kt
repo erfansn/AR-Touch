@@ -17,8 +17,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import ir.erfansn.artouch.R
 import ir.erfansn.artouch.databinding.FragmentCameraBinding
+import ir.erfansn.artouch.detector.HandDetectionResult
 import ir.erfansn.artouch.fragment.PermissionsFragment.Companion.isCameraPermissionGranted
-import ir.erfansn.artouch.detector.HandDetector
+import ir.erfansn.artouch.detector.ObjectDetector
 import ir.erfansn.artouch.detector.MediaPipeHandDetector
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -31,7 +32,7 @@ class CameraFragment : Fragment() {
 
     private val backgroundExecutor = Executors.newSingleThreadExecutor()
 
-    private lateinit var handDetector: HandDetector
+    private lateinit var handDetector: ObjectDetector<HandDetectionResult>
 
     override fun onCreateView(
         inflater: LayoutInflater,
