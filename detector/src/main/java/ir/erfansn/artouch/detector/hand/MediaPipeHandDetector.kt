@@ -1,4 +1,4 @@
-package ir.erfansn.artouch.detector
+package ir.erfansn.artouch.detector.hand
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -11,6 +11,7 @@ import com.google.mediapipe.tasks.core.BaseOptions
 import com.google.mediapipe.tasks.core.Delegate
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker
+import ir.erfansn.artouch.detector.ObjectDetector
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -88,7 +89,7 @@ class MediaPipeHandDetector(
         try {
             handLandmarker?.detectAsync(mpImage, frameTime)
         } catch (e: Exception) {
-            Log.e(TAG, "Try detect Hand Landmarker when it was closed!")
+            Log.w(TAG, "Try detect Hand Landmarker when it was closed!")
         }
     }
 

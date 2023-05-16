@@ -1,4 +1,4 @@
-package ir.erfansn.artouch.detector
+package ir.erfansn.artouch.detector.hand
 
 import android.content.Context
 import android.graphics.Canvas
@@ -41,16 +41,19 @@ class HandLandmarksView(context: Context?, attrs: AttributeSet?) : View(context,
             val lines = mutableListOf<Float>()
             val points = mutableListOf<Float>()
 
+            val widthSizeDelta = (imageWidth * scaleFactor - width).toInt()
+            val heightSizeDelta = (imageHeight * scaleFactor - height).toInt()
+
             for (landmarks in handLandmarkerResult.landmarks()) {
                 for (i in landmarkConnections.indices step 2) {
                     val startX =
-                        landmarks[landmarkConnections[i]].x() * imageWidth * scaleFactor - (imageWidth * scaleFactor - width).toInt() / 2
+                        landmarks[landmarkConnections[i]].x() * imageWidth * scaleFactor - widthSizeDelta / 2
                     val startY =
-                        landmarks[landmarkConnections[i]].y() * imageHeight * scaleFactor - (imageHeight * scaleFactor - height).toInt() / 2
+                        landmarks[landmarkConnections[i]].y() * imageHeight * scaleFactor - heightSizeDelta / 2
                     val endX =
-                        landmarks[landmarkConnections[i + 1]].x() * imageWidth * scaleFactor - (imageWidth * scaleFactor - width).toInt() / 2
+                        landmarks[landmarkConnections[i + 1]].x() * imageWidth * scaleFactor - widthSizeDelta / 2
                     val endY =
-                        landmarks[landmarkConnections[i + 1]].y() * imageHeight * scaleFactor - (imageHeight * scaleFactor - height).toInt() / 2
+                        landmarks[landmarkConnections[i + 1]].y() * imageHeight * scaleFactor - heightSizeDelta / 2
                     lines.add(startX)
                     lines.add(startY)
                     lines.add(endX)

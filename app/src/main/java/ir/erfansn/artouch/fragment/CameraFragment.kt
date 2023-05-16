@@ -17,10 +17,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import ir.erfansn.artouch.R
 import ir.erfansn.artouch.databinding.FragmentCameraBinding
-import ir.erfansn.artouch.detector.HandDetectionResult
+import ir.erfansn.artouch.detector.hand.HandDetectionResult
 import ir.erfansn.artouch.fragment.PermissionsFragment.Companion.isCameraPermissionGranted
 import ir.erfansn.artouch.detector.ObjectDetector
-import ir.erfansn.artouch.detector.MediaPipeHandDetector
+import ir.erfansn.artouch.detector.hand.MediaPipeHandDetector
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors

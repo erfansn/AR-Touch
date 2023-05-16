@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ir.erfansn.artouch.detector.HandLandmarksView
+    <ir.erfansn.artouch.detector.hand.HandLandmarksView
         android:id="@+id/hand_landmarks"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

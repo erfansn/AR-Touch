@@ -1,4 +1,4 @@
-package ir.erfansn.artouch.detector
+package ir.erfansn.artouch.detector.hand
 
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarkerResult
 
