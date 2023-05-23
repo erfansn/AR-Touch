@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.concurrent.futures.await
 import androidx.fragment.app.Fragment
@@ -17,10 +19,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import ir.erfansn.artouch.R
 import ir.erfansn.artouch.databinding.FragmentCameraBinding
-import ir.erfansn.artouch.detector.hand.HandDetectionResult
-import ir.erfansn.artouch.fragment.PermissionsFragment.Companion.isCameraPermissionGranted
 import ir.erfansn.artouch.detector.ObjectDetector
+import ir.erfansn.artouch.detector.hand.HandDetectionResult
 import ir.erfansn.artouch.detector.hand.MediaPipeHandDetector
+import ir.erfansn.artouch.detector.marker.ArUcoMarkerDetector
+import ir.erfansn.artouch.detector.marker.MarkerDetectionResult
+import ir.erfansn.artouch.fragment.PermissionsFragment.Companion.isCameraPermissionGranted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
@@ -30,9 +34,10 @@ class CameraFragment : Fragment() {
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
 
-    private val backgroundExecutor = Executors.newSingleThreadExecutor()
+    private val backgroundExecutor = Executors.newFixedThreadPool(2)
 
     private lateinit var handDetector: ObjectDetector<HandDetectionResult>
+    private lateinit var markerDetector: ObjectDetector<MarkerDetectionResult>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,6 +52,7 @@ class CameraFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         handDetector = MediaPipeHandDetector(context = requireContext())
+        markerDetector = ArUcoMarkerDetector()
 
         lifecycleScope.launch {
             startCamera()
@@ -59,6 +65,13 @@ class CameraFragment : Fragment() {
                         }.collect {
                             binding.handLandmarks.result = it
                             Log.d(TAG, "Hand detection time inference: ${it.inferenceTime}")
+                        }
+                }
+                launch {
+                    markerDetector.result
+                        .collect {
+                            binding.markerPositions.result = it
+                            Log.d(TAG, "ArUco detection time inference: ${it.inferenceTime}")
                         }
                 }
             }
@@ -78,14 +91,21 @@ class CameraFragment : Fragment() {
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_BLOCK_PRODUCER)
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
             .build()
+        val markerAnalysis = ImageAnalysis.Builder()
+            .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
+            .setResolutionSelector(ResolutionSelector.Builder()
+                .setAspectRatioStrategy(AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY)
+                .build())
+            .build()
 
         val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
         unbindAll()
-        bindToLifecycle(viewLifecycleOwner, cameraSelector, preview, imageAnalysis)
+        bindToLifecycle(viewLifecycleOwner, cameraSelector, preview, handAnalysis, markerAnalysis)
 
         preview.setSurfaceProvider(binding.preview.surfaceProvider)
-        imageAnalysis.setAnalyzer(backgroundExecutor, handDetector::detect)
+        handAnalysis.setAnalyzer(backgroundExecutor, handDetector::detect)
+        markerAnalysis.setAnalyzer(backgroundExecutor, markerDetector::detect)
     }
 
     override fun onResume() {
