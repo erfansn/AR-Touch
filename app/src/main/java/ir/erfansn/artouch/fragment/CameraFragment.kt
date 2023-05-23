@@ -52,13 +52,15 @@ class CameraFragment : Fragment() {
             startCamera()
 
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                handDetector.result
-                    .catch {
-                        Log.e(TAG, "A error in Hand detector is occurred", it)
-                    }.collect {
-                        binding.handLandmarks.setResult(it)
-                        Log.d(TAG, "Hand detection time inference: ${it.inferenceTime}")
-                    }
+                launch {
+                    handDetector.result
+                        .catch {
+                            Log.e(TAG, "A error in Hand detector is occurred", it)
+                        }.collect {
+                            binding.handLandmarks.result = it
+                            Log.d(TAG, "Hand detection time inference: ${it.inferenceTime}")
+                        }
+                }
             }
         }
     }
@@ -70,10 +72,10 @@ class CameraFragment : Fragment() {
     }
 
     private fun ProcessCameraProvider.rebindUseCases() {
-        val preview = Preview.Builder().build()
-
-        val imageAnalysis = ImageAnalysis.Builder()
-            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+        val preview = Preview.Builder()
+            .build()
+        val handAnalysis = ImageAnalysis.Builder()
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_BLOCK_PRODUCER)
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
             .build()
 
@@ -96,6 +98,8 @@ class CameraFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        backgroundExecutor.shutdown()
     }
 
     companion object {

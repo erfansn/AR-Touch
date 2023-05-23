@@ -3,8 +3,10 @@ package ir.erfansn.artouch.detector.hand
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.graphics.PixelFormat
 import android.os.SystemClock
 import android.util.Log
+import android.util.Size
 import androidx.camera.core.ImageProxy
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.tasks.core.BaseOptions
@@ -42,10 +44,9 @@ class MediaPipeHandDetector(
 
                     trySend(
                         HandDetectionResult(
-                            result,
-                            inferenceTime,
-                            input.height,
-                            input.width
+                            inferenceTime = inferenceTime,
+                            inputImageSize = Size(input.width, input.height),
+                            landmarks = result,
                         )
                     )
                 }
@@ -62,15 +63,16 @@ class MediaPipeHandDetector(
     }.flowOn(defaultDispatcher)
 
     override fun detect(imageProxy: ImageProxy) {
+        require(imageProxy.format == PixelFormat.RGBA_8888) { "Image format must be RGBA 8888." }
+
         val frameTime = SystemClock.uptimeMillis()
 
         // Copy out RGB bits from the frame to a bitmap buffer
-        val bitmapBuffer =
-            Bitmap.createBitmap(
-                imageProxy.width,
-                imageProxy.height,
-                Bitmap.Config.ARGB_8888
-            )
+        val bitmapBuffer = Bitmap.createBitmap(
+            imageProxy.width,
+            imageProxy.height,
+            Bitmap.Config.ARGB_8888,
+        )
         imageProxy.use { bitmapBuffer.copyPixelsFromBuffer(imageProxy.planes[0].buffer) }
         imageProxy.close()
 
@@ -89,7 +91,7 @@ class MediaPipeHandDetector(
         try {
             handLandmarker?.detectAsync(mpImage, frameTime)
         } catch (e: Exception) {
-            Log.w(TAG, "Try detect Hand Landmarker when it was closed!")
+            Log.w(TAG, "Trying to detect Hand Landmarks when detector has been closed!")
         }
     }
 

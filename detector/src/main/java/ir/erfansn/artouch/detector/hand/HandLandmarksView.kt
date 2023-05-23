@@ -6,16 +6,14 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
-import androidx.core.content.ContextCompat
+import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmark
-import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarkerResult
 import kotlin.math.max
 
-class HandLandmarksView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
+class HandLandmarksView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
-    private var result: HandLandmarkerResult? = null
-    private var linePaint = Paint()
     private var pointPaint = Paint()
+    private var linePaint = Paint()
 
     private var scaleFactor: Float = 1f
     private var imageWidth: Int = 1
@@ -26,7 +24,7 @@ class HandLandmarksView(context: Context?, attrs: AttributeSet?) : View(context,
     }
 
     private fun initPaints() {
-        linePaint.color = ContextCompat.getColor(context!!, android.R.color.darker_gray)
+        linePaint.color = Color.LTGRAY
         linePaint.strokeWidth = LANDMARK_STROKE_WIDTH
         linePaint.style = Paint.Style.STROKE
 
@@ -37,23 +35,16 @@ class HandLandmarksView(context: Context?, attrs: AttributeSet?) : View(context,
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
-        result?.let { handLandmarkerResult ->
+        result?.landmarks?.let { result ->
             val lines = mutableListOf<Float>()
             val points = mutableListOf<Float>()
 
-            val widthSizeDelta = (imageWidth * scaleFactor - width).toInt()
-            val heightSizeDelta = (imageHeight * scaleFactor - height).toInt()
-
-            for (landmarks in handLandmarkerResult.landmarks()) {
+            for (landmarks in result.landmarks()) {
                 for (i in landmarkConnections.indices step 2) {
-                    val startX =
-                        landmarks[landmarkConnections[i]].x() * imageWidth * scaleFactor - widthSizeDelta / 2
-                    val startY =
-                        landmarks[landmarkConnections[i]].y() * imageHeight * scaleFactor - heightSizeDelta / 2
-                    val endX =
-                        landmarks[landmarkConnections[i + 1]].x() * imageWidth * scaleFactor - widthSizeDelta / 2
-                    val endY =
-                        landmarks[landmarkConnections[i + 1]].y() * imageHeight * scaleFactor - heightSizeDelta / 2
+                    val startX = landmarks[landmarkConnections[i]].previewOptimized.x()
+                    val startY = landmarks[landmarkConnections[i]].previewOptimized.y()
+                    val endX = landmarks[landmarkConnections[i + 1]].previewOptimized.x()
+                    val endY = landmarks[landmarkConnections[i + 1]].previewOptimized.y()
                     lines.add(startX)
                     lines.add(startY)
                     lines.add(endX)
@@ -67,18 +58,29 @@ class HandLandmarksView(context: Context?, attrs: AttributeSet?) : View(context,
         }
     }
 
-    fun setResult(
-        result: HandDetectionResult,
-    ) {
-        this.result = result.landmarks
+    private val NormalizedLandmark.previewOptimized: NormalizedLandmark
+        get() {
+            val widthSizeDeltaHalf = (imageWidth * scaleFactor - width).toInt() / 2
+            val heightSizeDeltaHalf = (imageHeight * scaleFactor - height).toInt() / 2
+            return NormalizedLandmark.create(
+                x() * imageWidth * scaleFactor - widthSizeDeltaHalf,
+                y() * imageHeight * scaleFactor - heightSizeDeltaHalf,
+                z()
+            )
+        }
 
-        this.imageHeight = result.inputImageHeight
-        this.imageWidth = result.inputImageWidth
+    var result: HandDetectionResult? = null
+        set(value) {
+            field = value
+            value ?: return
 
-        scaleFactor = max(width / imageWidth.toFloat(), height / imageHeight.toFloat())
+            imageWidth = value.inputImageSize.width
+            imageHeight = value.inputImageSize.height
 
-        invalidate()
-    }
+            scaleFactor = max(width / imageWidth.toFloat(), height / imageHeight.toFloat())
+
+            invalidate()
+        }
 
     companion object {
         private const val LANDMARK_STROKE_WIDTH = 8F
