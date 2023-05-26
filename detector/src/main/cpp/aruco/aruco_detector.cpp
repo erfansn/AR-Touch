@@ -2,7 +2,6 @@
 #include <opencv2/core/mat.hpp>
 #include "aruco_nano.h"
 #include <android/log.h>
-#include <omp.h>
 
 #define LogD(...)  __android_log_print(ANDROID_LOG_DEBUG, "ArucoDetectorNative", __VA_ARGS__)
 
@@ -21,22 +20,21 @@ Java_ir_erfansn_artouch_detector_marker_ArUcoMarkerDetector_detectArUco(
     auto markers = aruconano::MarkerDetector::detect(grayFrame);
 
     const int MARKER_COUNT = 4;
-
-    static float corners[MARKER_COUNT][2];
-    static int tryToDetection = 0;
-
     const int MAX_TRY_TO_DETECTION = 30;
 
+    static float corners[MARKER_COUNT][2];
+    static int failedDetectionCounter = 0;
+
     if (!markers.empty()) {
-        tryToDetection = 0;
+        failedDetectionCounter = 0;
         for (auto & marker: markers) {
             if (marker.id < MARKER_COUNT) {
                 corners[marker.id][0] = marker[0].x;
                 corners[marker.id][1] = marker[0].y;
             }
         }
-    } else if (++tryToDetection == MAX_TRY_TO_DETECTION) {
-        tryToDetection = 0;
+    } else if (++failedDetectionCounter == MAX_TRY_TO_DETECTION) {
+        failedDetectionCounter = 0;
         for (auto &corner: corners) {
             corner[0] = 0;
             corner[1] = 0;

@@ -22,7 +22,7 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        aruco_detector.cpp)
+        aruco/aruco_detector.cpp)
 
 find_package(OpenCV 4.7 REQUIRED java)
 
