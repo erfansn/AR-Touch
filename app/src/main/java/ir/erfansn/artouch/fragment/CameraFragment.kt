@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
@@ -12,6 +13,9 @@ import androidx.camera.core.resolutionselector.AspectRatioStrategy
 import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.concurrent.futures.await
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +23,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import ir.erfansn.artouch.R
 import ir.erfansn.artouch.databinding.FragmentCameraBinding
+import ir.erfansn.artouch.detector.DefaultTouchPositionExtractor
 import ir.erfansn.artouch.detector.ObjectDetector
 import ir.erfansn.artouch.detector.hand.HandDetectionResult
 import ir.erfansn.artouch.detector.hand.MediaPipeHandDetector
@@ -56,6 +61,10 @@ class CameraFragment : Fragment() {
             coroutineScope = lifecycleScope,
         )
         markerDetector = ArUcoMarkerDetector()
+        val touchPositionExtractor = DefaultTouchPositionExtractor(
+            handDetector = handDetector,
+            markerDetector = markerDetector,
+        )
 
         lifecycleScope.launch {
             startCamera()
@@ -77,7 +86,25 @@ class CameraFragment : Fragment() {
                             Log.d(TAG, "ArUco detection time inference: ${it.inferenceTime}")
                         }
                 }
+
+                launch {
+                    touchPositionExtractor.touchPosition
+                        .catch {
+                            Log.e(TAG, "A error in Touch position extractor is occurred", it)
+                        }.collect {
+                            binding.touchPosition.text =
+                                getString(R.string.touch_position, it.x, it.y)
+                            Log.d(TAG, "Touching point is $it")
+                        }
+                }
             }
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.touchPosition) { touchPosition, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemGestures())
+
+            touchPosition.updateLayoutParams<MarginLayoutParams> { topMargin = insets.top }
+            WindowInsetsCompat.CONSUMED
         }
     }
 

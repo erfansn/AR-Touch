@@ -6,4 +6,5 @@
     <string name="preference_permissions_rationale_shown">permissions_rationale_shown</string>
     <string name="ok">OK</string>
     <string name="go">GO</string>
+    <string name="touch_position">Touch position (%.4f, %.4f)</string>
 </resources>
