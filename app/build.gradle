@@ -51,6 +51,8 @@ dependencies {
     implementation libs.androidx.appcompat
     implementation libs.androidx.lifecycle.viewModel
     implementation libs.androidx.concurrent.futures
+    // To prevent ListenableFuture conflict this dependency temporary is added
+    implementation 'com.google.guava:guava:29.0-android'
 
     implementation libs.google.android.material
 
