@@ -15,14 +15,18 @@ import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker
 import ir.erfansn.artouch.detector.ObjectDetector
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.shareIn
 
 class MediaPipeHandDetector(
     context: Context,
     defaultDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    coroutineScope: CoroutineScope,
 ) : ObjectDetector<HandDetectionResult> {
 
     private var handLandmarker: HandLandmarker? = null
@@ -61,7 +65,10 @@ class MediaPipeHandDetector(
             handLandmarker = null
             Log.i(TAG, "HandLandmerker closed")
         }
-    }.flowOn(defaultDispatcher)
+    }.flowOn(defaultDispatcher).shareIn(
+        scope = coroutineScope,
+        started = SharingStarted.WhileSubscribed(5_000)
+    )
 
     override fun detect(imageProxy: ImageProxy) {
         require(imageProxy.format == PixelFormat.RGBA_8888) { "Image format must be RGBA 8888." }

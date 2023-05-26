@@ -51,7 +51,10 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        handDetector = MediaPipeHandDetector(context = requireContext())
+        handDetector = MediaPipeHandDetector(
+            context = requireContext(),
+            coroutineScope = lifecycleScope,
+        )
         markerDetector = ArUcoMarkerDetector()
 
         lifecycleScope.launch {
