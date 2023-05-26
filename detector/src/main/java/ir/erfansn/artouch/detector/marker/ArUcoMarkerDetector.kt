@@ -6,9 +6,8 @@ import android.util.Log
 import android.util.Size
 import androidx.camera.core.ImageProxy
 import ir.erfansn.artouch.detector.ObjectDetector
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import java.nio.ByteBuffer
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
@@ -19,13 +18,13 @@ class ArUcoMarkerDetector : ObjectDetector<MarkerDetectionResult> {
         System.loadLibrary("aruco_detector")
     }
 
-    private val _result = MutableStateFlow(MarkerDetectionResult())
-    override val result = _result.asStateFlow()
+    private val _result = MutableSharedFlow<MarkerDetectionResult>(extraBufferCapacity = 1)
+    override val result = _result.asSharedFlow()
 
     override fun detect(imageProxy: ImageProxy) {
         require(imageProxy.format == ImageFormat.YUV_420_888) { "Image format must be YUV 420 888." }
 
-        _result.update {
+        _result.tryEmit(
             detectArUco(imageProxy).let { (inferenceTime, markers) ->
                 val adjustedImageSize =
                     if (imageProxy.imageInfo.rotationDegrees % 180 == 0) {
@@ -42,7 +41,7 @@ class ArUcoMarkerDetector : ObjectDetector<MarkerDetectionResult> {
             }.also {
                 Log.v(TAG, it.toString())
             }
-        }
+        )
         imageProxy.close()
     }
 
