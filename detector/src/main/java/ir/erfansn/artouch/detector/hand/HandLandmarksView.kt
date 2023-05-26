@@ -35,11 +35,11 @@ class HandLandmarksView(context: Context, attrs: AttributeSet) : View(context, a
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
-        result?.landmarks?.let { result ->
+        result?.let { result ->
             val lines = mutableListOf<Float>()
             val points = mutableListOf<Float>()
 
-            for (landmarks in result.landmarks()) {
+            for (landmarks in result.landmarks) {
                 for (i in landmarkConnections.indices step 2) {
                     val startX = landmarks[landmarkConnections[i]].previewOptimized.x()
                     val startY = landmarks[landmarkConnections[i]].previewOptimized.y()

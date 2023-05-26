@@ -46,7 +46,7 @@ class MediaPipeHandDetector(
                         HandDetectionResult(
                             inferenceTime = inferenceTime,
                             inputImageSize = Size(input.width, input.height),
-                            landmarks = result,
+                            landmarks = result.landmarks(),
                         )
                     )
                 }
@@ -59,6 +59,7 @@ class MediaPipeHandDetector(
         awaitClose {
             handLandmarker?.close()
             handLandmarker = null
+            Log.i(TAG, "HandLandmerker closed")
         }
     }.flowOn(defaultDispatcher)
 

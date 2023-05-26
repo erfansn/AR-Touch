@@ -1,10 +1,10 @@
 package ir.erfansn.artouch.detector.hand
 
 import android.util.Size
-import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarkerResult
+import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 
 data class HandDetectionResult(
     val inferenceTime: Long,
     val inputImageSize: Size,
-    val landmarks: HandLandmarkerResult,
+    val landmarks: List<List<NormalizedLandmark>>,
 )
