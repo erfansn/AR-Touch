@@ -3,6 +3,9 @@ package ir.erfansn.artouch.detector
 import android.graphics.PointF
 import android.util.Log
 import android.util.Size
+import androidx.core.graphics.minus
+import androidx.core.graphics.plus
+import androidx.core.graphics.times
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmark
 import ir.erfansn.artouch.detector.hand.HandDetectionResult
@@ -11,6 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlin.math.abs
 import kotlin.math.atan2
 
@@ -22,6 +27,8 @@ class DefaultTouchPositionExtractor(
     init {
         System.loadLibrary("touch_position_extractor")
     }
+
+    private var previousTouchPoint = PointF(0f, 0f)
 
     override val touchPosition = handDetector.result
         .combine(markerDetector.result) { hand, marker ->
@@ -60,6 +67,12 @@ class DefaultTouchPositionExtractor(
             } else {
                 PointF(0f, 0f)
             }
+        }.map {
+            if (it == PointF(0f, 0f) || previousTouchPoint == PointF(0f, 0f)) return@map it
+
+            previousTouchPoint + (it - previousTouchPoint) * TOLERANCE
+        }.onEach {
+            previousTouchPoint = it
         }
         .flowOn(Dispatchers.Default)
         .distinctUntilChanged()
@@ -80,6 +93,7 @@ class DefaultTouchPositionExtractor(
     companion object {
         private const val TAG = "DefaultTouchPositionExtractor"
 
+        private const val TOLERANCE = 0.1f
         private const val MIN_TOUCHING_ANGLE = 8
     }
 }
