@@ -32,6 +32,8 @@ android {
 dependencies {
     implementation libs.androidx.core
 
+    implementation libs.kotlinx.coroutines
+
     testImplementation libs.junit4
     androidTestImplementation libs.androidx.test.ext
     androidTestImplementation libs.androidx.test.espresso.core
