@@ -1,4 +1,4 @@
-package ir.erfansn.artouch.dispatcher
+package ir.erfansn.artouch.dispatcher.ble
 
 import android.os.ParcelUuid
 import java.util.UUID

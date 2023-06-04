@@ -1,4 +1,4 @@
-package ir.erfansn.artouch.dispatcher.advertiser
+package ir.erfansn.artouch.dispatcher.ble.advertiser
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner

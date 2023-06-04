@@ -1,4 +1,4 @@
-package ir.erfansn.artouch.dispatcher.advertiser
+package ir.erfansn.artouch.dispatcher.ble.advertiser
 
 import android.annotation.SuppressLint
 import android.bluetooth.le.AdvertiseCallback
@@ -6,7 +6,7 @@ import android.bluetooth.le.AdvertiseData
 import android.bluetooth.le.AdvertiseSettings
 import android.bluetooth.le.BluetoothLeAdvertiser
 import android.util.Log
-import ir.erfansn.artouch.dispatcher.ArTouchSpecification
+import ir.erfansn.artouch.dispatcher.ble.ArTouchSpecification
 
 @SuppressLint("MissingPermission")
 class ArTouchBleAdvertiser(private val bleAdvertiser: BluetoothLeAdvertiser) : PeripheralBleAdvertiser {
