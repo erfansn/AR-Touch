@@ -24,6 +24,8 @@ internal class DefaultArTouchPeripheralRegistrar(private val context: Context) :
     private lateinit var hidProxy: BluetoothHidDevice
 
     override fun registerDevice() {
+        bluetoothAdapter.name = ArTouchSpecification.NAME
+
         val serviceListener = object : BluetoothProfile.ServiceListener {
             override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
                 registerArTouch(proxy as BluetoothHidDevice)
