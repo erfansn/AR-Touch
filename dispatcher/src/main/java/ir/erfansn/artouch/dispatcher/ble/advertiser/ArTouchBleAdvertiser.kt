@@ -12,8 +12,8 @@ import ir.erfansn.artouch.dispatcher.ble.ArTouchSpecification
 class ArTouchBleAdvertiser(private val bleAdvertiser: BluetoothLeAdvertiser) : PeripheralBleAdvertiser {
 
     private val advertiseSettings = AdvertiseSettings.Builder()
-        .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_LOW)
-        .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
+        .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
+        .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
         .setConnectable(true)
         .setTimeout(0)
         .build()
