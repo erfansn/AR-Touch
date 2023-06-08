@@ -12,6 +12,12 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import ir.erfansn.artouch.dispatcher.ble.ArTouchSpecification
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.coroutines.resume
 
 @SuppressLint("MissingPermission")
 internal class DefaultArTouchPeripheralRegistrar(private val context: Context) : ArTouchPeripheralRegistrar {
@@ -22,6 +28,8 @@ internal class DefaultArTouchPeripheralRegistrar(private val context: Context) :
     private val bluetoothAdapter = bluetoothManager.adapter
 
     private lateinit var hidProxy: BluetoothHidDevice
+
+    override val connectionState = MutableStateFlow(ArTouchConnectionState.Disconnected)
 
     override fun registerDevice() {
         bluetoothAdapter.name = ArTouchSpecification.NAME
@@ -58,6 +66,17 @@ internal class DefaultArTouchPeripheralRegistrar(private val context: Context) :
             ),
             ContextCompat.getMainExecutor(context),
             object : BluetoothHidDevice.Callback() {
+                override fun onConnectionStateChanged(device: BluetoothDevice?, state: Int) {
+                    if (state == BluetoothProfile.STATE_DISCONNECTING) return
+
+                    connectionState.value = when (state) {
+                        BluetoothProfile.STATE_DISCONNECTED -> ArTouchConnectionState.Disconnected
+                        BluetoothProfile.STATE_CONNECTING -> ArTouchConnectionState.Connecting
+                        BluetoothProfile.STATE_CONNECTED -> ArTouchConnectionState.Connected
+                        else -> throw IllegalStateException()
+                    }
+                }
+
                 override fun onAppStatusChanged(pluggedDevice: BluetoothDevice?, registered: Boolean) {
                     if (!registered) return
 
