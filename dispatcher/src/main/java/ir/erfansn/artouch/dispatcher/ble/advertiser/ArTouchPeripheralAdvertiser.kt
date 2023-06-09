@@ -16,8 +16,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
+// Move to subpackage of ./peripheral
 @SuppressLint("MissingPermission")
-class ArTouchBleAdvertiser(context: Context) : BleHidPeripheralAdvertiser {
+class ArTouchPeripheralAdvertiser(context: Context) : BleHidPeripheralAdvertiser {
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private val arTouchPeripheralRegistrar = DefaultArTouchPeripheralRegistrar(
