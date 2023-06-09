@@ -33,8 +33,6 @@ internal class DefaultArTouchPeripheralRegistrar(
     override val connectionState = MutableStateFlow(ArTouchConnectionState.Disconnected)
 
     override suspend fun registerDevice() = suspendCancellableCoroutine {
-        bluetoothAdapter.name = ArTouchSpecification.NAME
-
         val serviceListener = object : BluetoothProfile.ServiceListener {
             override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
                 scope.launch {

@@ -41,6 +41,10 @@ class ArTouchBleAdvertiser(context: Context) : PeripheralBleAdvertiser {
         }
     }
 
+    init {
+        bluetoothAdapter.name = ArTouchSpecification.NAME
+    }
+
     override fun startAdvertising() {
         scope.launch {
             arTouchPeripheralRegistrar.registerDevice()
