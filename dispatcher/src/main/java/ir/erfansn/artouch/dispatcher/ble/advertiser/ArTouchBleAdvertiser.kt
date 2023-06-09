@@ -53,7 +53,7 @@ class ArTouchBleAdvertiser(context: Context) : PeripheralBleAdvertiser {
                     .build(),
                 AdvertiseData.Builder()
                     .addServiceUuid(ArTouchSpecification.SERVICE_UUID)
-                    .setIncludeDeviceName(false)
+                    .setIncludeDeviceName(true)
                     .build(),
                 advertiseCallback,
             )
