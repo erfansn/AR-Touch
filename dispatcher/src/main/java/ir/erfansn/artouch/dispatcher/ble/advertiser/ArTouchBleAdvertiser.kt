@@ -17,7 +17,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 @SuppressLint("MissingPermission")
-class ArTouchBleAdvertiser(context: Context) : PeripheralBleAdvertiser {
+class ArTouchBleAdvertiser(context: Context) : BleHidPeripheralAdvertiser {
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private val arTouchPeripheralRegistrar = DefaultArTouchPeripheralRegistrar(

@@ -3,7 +3,7 @@ package ir.erfansn.artouch.dispatcher.ble.advertiser
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 
-interface PeripheralBleAdvertiser : DefaultLifecycleObserver {
+interface BleHidPeripheralAdvertiser : DefaultLifecycleObserver {
     fun startAdvertising()
     fun stopAdvertising()
 
