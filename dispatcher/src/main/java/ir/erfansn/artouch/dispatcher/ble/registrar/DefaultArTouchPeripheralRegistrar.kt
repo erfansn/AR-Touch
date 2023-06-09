@@ -20,9 +20,10 @@ import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
 
 @SuppressLint("MissingPermission")
-internal class DefaultArTouchPeripheralRegistrar(private val context: Context) : ArTouchPeripheralRegistrar {
-
-    var onRegistered: (BluetoothHidDevice) -> Unit = { }
+internal class DefaultArTouchPeripheralRegistrar(
+    private val context: Context,
+    private val scope: CoroutineScope,
+) : ArTouchPeripheralRegistrar {
 
     private val bluetoothManager = context.getSystemService<BluetoothManager>()!!
     private val bluetoothAdapter = bluetoothManager.adapter
@@ -31,12 +32,23 @@ internal class DefaultArTouchPeripheralRegistrar(private val context: Context) :
 
     override val connectionState = MutableStateFlow(ArTouchConnectionState.Disconnected)
 
-    override fun registerDevice() {
+    override suspend fun registerDevice() = suspendCancellableCoroutine {
         bluetoothAdapter.name = ArTouchSpecification.NAME
 
         val serviceListener = object : BluetoothProfile.ServiceListener {
             override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
-                registerArTouch(proxy as BluetoothHidDevice)
+                scope.launch {
+                    // Set casting result directly to hidProxy
+                    val hidProfile = proxy as BluetoothHidDevice
+                    withTimeoutOrNull(2500) {
+                        hidProfile.registerArTouch()
+                    }?.let { _ ->
+                        // Resume with Unit
+                        it.resume(hidProfile)
+                    } ?: run {
+                        it.cancel()
+                    }
+                }
             }
 
             override fun onServiceDisconnected(profile: Int) {
@@ -46,8 +58,8 @@ internal class DefaultArTouchPeripheralRegistrar(private val context: Context) :
         bluetoothAdapter.getProfileProxy(context, serviceListener, BluetoothProfile.HID_DEVICE)
     }
 
-    private fun registerArTouch(hidDevice: BluetoothHidDevice) {
-        hidDevice.registerApp(
+    private suspend fun BluetoothHidDevice.registerArTouch() = suspendCancellableCoroutine {
+        registerApp(
             BluetoothHidDeviceAppSdpSettings(
                 ArTouchSpecification.NAME,
                 ArTouchSpecification.DESCRIPTION,
@@ -80,8 +92,9 @@ internal class DefaultArTouchPeripheralRegistrar(private val context: Context) :
                 override fun onAppStatusChanged(pluggedDevice: BluetoothDevice?, registered: Boolean) {
                     if (!registered) return
 
-                    onRegistered(hidDevice)
-                    hidProxy = hidDevice
+                    // Remove this
+                    hidProxy = this@registerArTouch
+                    it.resume(Unit)
                 }
             }
         )
