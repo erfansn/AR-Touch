@@ -23,12 +23,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import ir.erfansn.artouch.R
 import ir.erfansn.artouch.databinding.FragmentCameraBinding
-import ir.erfansn.artouch.detector.DefaultTouchPositionExtractor
-import ir.erfansn.artouch.detector.ObjectDetector
-import ir.erfansn.artouch.detector.hand.HandDetectionResult
-import ir.erfansn.artouch.detector.hand.MediaPipeHandDetector
-import ir.erfansn.artouch.detector.marker.ArUcoMarkerDetector
-import ir.erfansn.artouch.detector.marker.MarkerDetectionResult
+import ir.erfansn.artouch.producer.detector.ObjectDetector
+import ir.erfansn.artouch.producer.detector.hand.HandDetectionResult
+import ir.erfansn.artouch.producer.detector.hand.MediaPipeHandDetector
+import ir.erfansn.artouch.producer.detector.marker.ArUcoMarkerDetector
+import ir.erfansn.artouch.producer.detector.marker.MarkerDetectionResult
+import ir.erfansn.artouch.producer.DefaultTouchEventProducer
 import ir.erfansn.artouch.fragment.PermissionsFragment.Companion.isCameraPermissionGranted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -61,7 +61,8 @@ class CameraFragment : Fragment() {
             coroutineScope = lifecycleScope,
         )
         markerDetector = ArUcoMarkerDetector()
-        val touchPositionExtractor = DefaultTouchPositionExtractor(
+
+        val touchEventProducer = DefaultTouchEventProducer(
             handDetector = handDetector,
             markerDetector = markerDetector,
         )
@@ -88,13 +89,15 @@ class CameraFragment : Fragment() {
                 }
 
                 launch {
-                    touchPositionExtractor.touchPosition
+                    touchEventProducer.touchEvent
                         .catch {
                             Log.e(TAG, "A error in Touch position extractor is occurred", it)
-                        }.collect {
-                            binding.touchPosition.text =
-                                getString(R.string.touch_position, it.x, it.y)
-                            Log.d(TAG, "Touching point is $it")
+                        }.collect { (pressed, position) ->
+                            if (pressed) {
+                                binding.touchPosition.text =
+                                    getString(R.string.touch_position, position.x, position.y)
+                            }
+                            Log.d(TAG, "Touch event is position=$position, pressed=$pressed")
                         }
                 }
             }

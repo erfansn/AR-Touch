@@ -9,12 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ir.erfansn.artouch.detector.marker.MarkerPositionView
+    <ir.erfansn.artouch.producer.detector.marker.MarkerPositionView
         android:id="@+id/marker_positions"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ir.erfansn.artouch.detector.hand.HandLandmarksView
+    <ir.erfansn.artouch.producer.detector.hand.HandLandmarksView
         android:id="@+id/hand_landmarks"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

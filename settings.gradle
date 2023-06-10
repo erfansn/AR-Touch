@@ -22,5 +22,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "AR Touch"
 include ':app'
-include ':detector'
+include ':producer'
 include ':dispatcher'
