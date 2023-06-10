@@ -1,5 +1,5 @@
 package ir.erfansn.artouch.dispatcher.ble.registrar
 
-enum class ArTouchConnectionState {
+enum class BleHidConnectionState {
     Connected, Disconnected, Connecting, FailedToConnect
 }

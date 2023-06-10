@@ -10,18 +10,18 @@ import android.util.Log
 import androidx.core.content.getSystemService
 import androidx.lifecycle.LifecycleOwner
 import ir.erfansn.artouch.dispatcher.ble.ArTouchSpecification
-import ir.erfansn.artouch.dispatcher.ble.registrar.DefaultArTouchPeripheralRegistrar
+import ir.erfansn.artouch.dispatcher.ble.registrar.ArTouchPeripheralManager
+import ir.erfansn.artouch.dispatcher.ble.registrar.BleHidPeripheralRegistrar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-// Move to subpackage of ./peripheral
 @SuppressLint("MissingPermission")
 class ArTouchPeripheralAdvertiser(context: Context) : BleHidPeripheralAdvertiser {
 
     private val scope = CoroutineScope(Dispatchers.IO)
-    private val arTouchPeripheralRegistrar = DefaultArTouchPeripheralRegistrar(
+    private val arTouchPeripheralManager: BleHidPeripheralRegistrar = ArTouchPeripheralManager(
         context = context,
         scope = scope,
     )
@@ -48,7 +48,7 @@ class ArTouchPeripheralAdvertiser(context: Context) : BleHidPeripheralAdvertiser
 
     override fun startAdvertising() {
         scope.launch {
-            arTouchPeripheralRegistrar.registerDevice()
+            arTouchPeripheralManager.registerDevice()
             bleAdvertiser.startAdvertising(
                 AdvertiseSettings.Builder()
                     .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
@@ -67,7 +67,7 @@ class ArTouchPeripheralAdvertiser(context: Context) : BleHidPeripheralAdvertiser
 
     override fun stopAdvertising() {
         bleAdvertiser.stopAdvertising(advertiseCallback)
-        arTouchPeripheralRegistrar.unregisterDevice()
+        arTouchPeripheralManager.unregisterDevice()
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
@@ -75,6 +75,6 @@ class ArTouchPeripheralAdvertiser(context: Context) : BleHidPeripheralAdvertiser
     }
 
     companion object {
-        private const val TAG = "ArTouchBleAdvertiser"
+        private const val TAG = "ArTouchPeripheralAdvertiser"
     }
 }
