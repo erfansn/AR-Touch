@@ -1,4 +1,4 @@
-package ir.erfansn.artouch.dispatcher.ble.registrar
+package ir.erfansn.artouch.dispatcher.ble.peripheral
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice

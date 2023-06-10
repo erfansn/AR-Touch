@@ -1,4 +1,4 @@
-package ir.erfansn.artouch.dispatcher.ble.registrar
+package ir.erfansn.artouch.dispatcher.ble.peripheral
 
 import android.bluetooth.BluetoothDevice
 import kotlinx.coroutines.flow.StateFlow
@@ -18,4 +18,8 @@ internal interface BleHidPeripheralManager : BleHidPeripheralRegistrar {
     ): Boolean
     fun connect(centralDevice: BluetoothDevice)
     fun disconnect(centralDevice: BluetoothDevice)
+}
+
+enum class BleHidConnectionState {
+    Connected, Disconnected, Connecting, FailedToConnect
 }

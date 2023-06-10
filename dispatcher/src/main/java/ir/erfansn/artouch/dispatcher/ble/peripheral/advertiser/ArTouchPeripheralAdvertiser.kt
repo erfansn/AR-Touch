@@ -1,4 +1,4 @@
-package ir.erfansn.artouch.dispatcher.ble.advertiser
+package ir.erfansn.artouch.dispatcher.ble.peripheral.advertiser
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothManager
@@ -10,8 +10,8 @@ import android.util.Log
 import androidx.core.content.getSystemService
 import androidx.lifecycle.LifecycleOwner
 import ir.erfansn.artouch.dispatcher.ble.ArTouchSpecification
-import ir.erfansn.artouch.dispatcher.ble.registrar.ArTouchPeripheralManager
-import ir.erfansn.artouch.dispatcher.ble.registrar.BleHidPeripheralRegistrar
+import ir.erfansn.artouch.dispatcher.ble.peripheral.ArTouchPeripheralManager
+import ir.erfansn.artouch.dispatcher.ble.peripheral.BleHidPeripheralRegistrar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
