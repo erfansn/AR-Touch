@@ -1,5 +1,5 @@
 [versions]
-androidGradlePlugin = "8.0.1"
+androidGradlePlugin = "8.0.2"
 kotlin = "1.8.20"
 androidxCore = "1.10.0"
 androidxConcurrentFutures = "1.1.0"
