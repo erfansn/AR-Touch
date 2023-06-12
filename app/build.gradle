@@ -37,6 +37,10 @@ android {
     }
     buildFeatures {
         viewBinding true
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.androidxComposeCompiler
     }
 
     packagingOptions {
@@ -60,6 +64,11 @@ dependencies {
 
     implementation libs.bundles.navigation
     implementation libs.bundles.camerax
+
+    implementation platform(libs.androidx.compose.bom)
+    implementation libs.androidx.compose.material3
+    implementation libs.androidx.compose.ui.tooling
+    implementation libs.androidx.compose.ui.tooling.preview
 
     testImplementation libs.junit4
     androidTestImplementation libs.androidx.test.ext
