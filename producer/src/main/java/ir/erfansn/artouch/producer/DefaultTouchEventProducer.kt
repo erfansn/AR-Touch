@@ -12,14 +12,17 @@ import ir.erfansn.artouch.producer.detector.ObjectDetector
 import ir.erfansn.artouch.producer.detector.hand.HandDetectionResult
 import ir.erfansn.artouch.producer.detector.marker.MarkerDetectionResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.retryWhen
 import java.lang.Math.toDegrees
 import kotlin.math.abs
 import kotlin.math.atan2
+import kotlin.math.hypot
 
 class DefaultTouchEventProducer(
     handDetector: ObjectDetector<HandDetectionResult>,
@@ -35,45 +38,53 @@ class DefaultTouchEventProducer(
     override val touchEvent = handDetector.result
         .combine(markerDetector.result) { hand, marker ->
             require(isSameAspectRatio(hand.inputImageSize, marker.inputImageSize))
-            require(marker.markers.size == 4)
+            require(hand.landmarks.isNotEmpty())
+            require(marker.markers.isNotEmpty())
 
-            hand.landmarks.firstOrNull()?.let {
-                Log.d(TAG, it.joinToString())
+            hand.landmarks.first().let {
+                val indexFingerMcp = it[HandLandmark.INDEX_FINGER_MCP]
+                val middleFingerMcp = it[HandLandmark.MIDDLE_FINGER_MCP]
+                val touchFingerMcpCenterPoint = NormalizedLandmark.create(
+                    (indexFingerMcp.x() + middleFingerMcp.x()) / 2,
+                    (indexFingerMcp.y() + middleFingerMcp.y()) / 2,
+                    (indexFingerMcp.z() + middleFingerMcp.z()) / 2,
+                )
 
-                val wrist = it[HandLandmark.WRIST]
                 val indexFingerTip = it[HandLandmark.INDEX_FINGER_TIP]
-                val thumbTip = it[HandLandmark.THUMB_TIP]
-
+                val middleFingerTip = it[HandLandmark.MIDDLE_FINGER_TIP]
                 val touchFingersAngle = toDegrees(
                     abs(
                         atan2(
-                            y = indexFingerTip.y() - wrist.y(),
-                            x = indexFingerTip.x() - wrist.x()
+                            y = indexFingerTip.y() - touchFingerMcpCenterPoint.y(),
+                            x = indexFingerTip.x() - touchFingerMcpCenterPoint.x()
                         ) - atan2(
-                            y = thumbTip.y() - wrist.y(),
-                            x = thumbTip.x() - wrist.x()
+                            y = middleFingerTip.y() - touchFingerMcpCenterPoint.y(),
+                            x = middleFingerTip.x() - touchFingerMcpCenterPoint.x()
                         )
                     ).toDouble()
                 )
-                val centerTouchFingersPoint = calculateCenter(thumbTip, indexFingerTip).also {
-                    Log.d(TAG, "Center's Touch fingers is $it")
-                }
+                val touchFingersLength = hypot(
+                    x = indexFingerTip.x() - middleFingerTip.x(),
+                    y = indexFingerTip.y() - middleFingerTip.y(),
+                )
+                val touchFingersCenterPoint = calculateCenter(middleFingerTip, indexFingerTip)
 
-                Log.d(TAG, "Center point between Touch fingers is $centerTouchFingersPoint")
                 Log.d(TAG, "Angle between Touch fingers is $touchFingersAngle")
+                Log.d(TAG, "Length between Touch fingers is $touchFingersLength")
+                Log.d(TAG, "Center point between Touch fingers is $touchFingersCenterPoint")
 
                 TouchEvent(
-                    pressed = touchFingersAngle <= MIN_TOUCHING_ANGLE,
+                    pressed = touchFingersAngle <= MIN_TOUCHING_ANGLE || touchFingersLength <= MIN_TOUCHING_LENGTH,
                     position = extractTouchPosition(
-                        target = centerTouchFingersPoint,
+                        target = touchFingersCenterPoint,
                         boundary = marker.markers,
                     )
                 )
-            } ?: run {
-                TouchEvent.RELEASE
             }
-        }.map {
-            if (it == TouchEvent.RELEASE || previousTouchPosition == PointF(0f, 0f)) return@map it
+        }
+        .retryWith(TouchEvent.RELEASE)
+        .map {
+            if (!it.pressed) return@map it
 
             it.copy(
                 position = previousTouchPosition + (it.position - previousTouchPosition) * TOLERANCE
@@ -100,7 +111,15 @@ class DefaultTouchEventProducer(
     companion object {
         private const val TAG = "DefaultTouchEventProducer"
 
-        private const val TOLERANCE = 0.125f
-        private const val MIN_TOUCHING_ANGLE = 8
+        private const val TOLERANCE = 0.3f
+        private const val MIN_TOUCHING_ANGLE = 10f
+        private const val MIN_TOUCHING_LENGTH = 0.0385f
+    }
+}
+
+private fun <T> Flow<T>.retryWith(value: T): Flow<T> {
+    return retryWhen { _, _ ->
+        emit(value)
+        true
     }
 }
