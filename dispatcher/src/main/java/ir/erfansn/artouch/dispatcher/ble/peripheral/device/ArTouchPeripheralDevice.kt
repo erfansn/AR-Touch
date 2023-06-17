@@ -4,10 +4,10 @@ import android.graphics.PointF
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import ir.erfansn.artouch.dispatcher.ble.peripheral.BleHidConnectionState
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface ArTouchPeripheralDevice : DefaultLifecycleObserver {
-    val connectionState: Flow<BleHidConnectionState>
+    val connectionState: StateFlow<BleHidConnectionState>
     suspend fun dispatchTouch(tapped: Boolean, point: PointF)
     fun connect()
     fun disconnect()

@@ -14,6 +14,7 @@ import androidx.core.content.getSystemService
 import ir.erfansn.artouch.dispatcher.ble.ArTouchSpecification
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
@@ -30,7 +31,8 @@ internal class ArTouchPeripheralManager(
 
     private lateinit var hidProxy: BluetoothHidDevice
 
-    override val connectionState = MutableStateFlow(BleHidConnectionState.Disconnected)
+    private val _connectionState = MutableStateFlow(BleHidConnectionState.Disconnected)
+    override val connectionState = _connectionState.asStateFlow()
 
     @OptIn(ExperimentalUnsignedTypes::class)
     override fun trySendReport(
@@ -53,7 +55,7 @@ internal class ArTouchPeripheralManager(
         repeat(MAX_CONNECTION_TRY) {
             if (hidProxy.connect(centralDevice)) return
         }
-        connectionState.value = BleHidConnectionState.FailedToConnect
+        _connectionState.value = BleHidConnectionState.FailedToConnect
     }
 
     override fun disconnect(centralDevice: BluetoothDevice) {
@@ -105,7 +107,7 @@ internal class ArTouchPeripheralManager(
                 override fun onConnectionStateChanged(device: BluetoothDevice?, state: Int) {
                     if (state == BluetoothProfile.STATE_DISCONNECTING) return
 
-                    connectionState.value = when (state) {
+                    _connectionState.value = when (state) {
                         BluetoothProfile.STATE_DISCONNECTED -> BleHidConnectionState.Disconnected
                         BluetoothProfile.STATE_CONNECTING -> BleHidConnectionState.Connecting
                         BluetoothProfile.STATE_CONNECTED -> BleHidConnectionState.Connected
