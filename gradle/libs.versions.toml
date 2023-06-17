@@ -15,6 +15,7 @@ mediapipeTasks = "0.10.1"
 kotlinxCoroutines = "1.7.1"
 androidxComposeCompiler = "1.4.7"
 androidxComposeBom = "2023.05.01"
+themeAdapterM3 = "0.30.1"
 
 [libraries]
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
@@ -38,6 +39,7 @@ androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", versi
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+google-accompanist-themeadapter-m3 = { group = "com.google.accompanist", name = "accompanist-themeadapter-material3", version.ref = "themeAdapterM3" }
 
 [bundles]
 camerax = ["androidx-camera-core", "androidx-camera-camera2", "androidx-camera-view", "androidx-camera-lifecycle"]
