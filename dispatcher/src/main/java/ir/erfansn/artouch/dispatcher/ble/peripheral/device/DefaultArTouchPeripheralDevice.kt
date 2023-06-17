@@ -43,8 +43,8 @@ class DefaultArTouchPeripheralDevice(
                 id = ArTouchSpecification.REPORT_ID,
                 data = ubyteArrayOf(
                     if (tapped) 0x01u else 0x00u,
-                    0x02u,
-                    if (tapped) 0x01u else 0x00u,
+                    0x00u,
+                    if (tapped) 0x11u else 0x00u,
                     lx,
                     mx,
                     ly,
