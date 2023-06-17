@@ -83,7 +83,7 @@ class CameraFragment : Fragment() {
                 launch {
                     markerDetector.result
                         .collect {
-                            binding.markerPositions.result = it
+                            binding.markersPosition.result = it
                             Log.d(TAG, "ArUco detection time inference: ${it.inferenceTime}")
                         }
                 }

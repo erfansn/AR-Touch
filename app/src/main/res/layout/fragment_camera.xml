@@ -9,8 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ir.erfansn.artouch.producer.detector.marker.MarkerPositionView
-        android:id="@+id/marker_positions"
+re    <ir.erfansn.artouch.producer.detector.marker.MarkersPositionView
+        android:id="@+id/markers_position"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

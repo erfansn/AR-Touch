@@ -10,7 +10,7 @@ import android.util.Log
 import android.view.View
 import kotlin.math.max
 
-class MarkerPositionView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
+class MarkersPositionView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     private val pointPaint = Paint()
     private val linePaint = Paint()
@@ -76,6 +76,6 @@ class MarkerPositionView(context: Context?, attrs: AttributeSet?) : View(context
         }
 
     companion object {
-        private const val TAG = "MarkerPositionView"
+        private const val TAG = "MarkersPositionView"
     }
 }
