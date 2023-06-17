@@ -18,7 +18,7 @@ Java_ir_erfansn_artouch_producer_DefaultTouchEventProducer_extractTouchPosition(
     auto xFieldId = env->GetFieldID(pointFClass, "x", "F");
     auto yFieldId = env->GetFieldID(pointFClass, "y", "F");
 
-    const int POINT_COUNT = 4;
+    const auto POINT_COUNT = 4;
     Point2f srcPoints[POINT_COUNT];
     for (auto i = 0; i < POINT_COUNT; i++) {
         auto point = env->GetObjectArrayElement(boundary, i);
