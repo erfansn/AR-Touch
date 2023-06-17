@@ -25,7 +25,7 @@ class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
         require(imageProxy.format == ImageFormat.YUV_420_888) { "Image format must be YUV 420 888." }
 
         _result.tryEmit(
-            detectArUco(imageProxy).let { (inferenceTime, markers) ->
+            detectArUco(imageProxy).let { (inferenceTime, markersPosition) ->
                 val adjustedImageSize =
                     if (imageProxy.imageInfo.rotationDegrees % 180 == 0) {
                         Size(imageProxy.width, imageProxy.height)
@@ -36,7 +36,11 @@ class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
                 MarkersDetectionResult(
                     inferenceTime = inferenceTime,
                     inputImageSize = adjustedImageSize,
-                    positions = markersPosition / adjustedImageSize
+                    positions = if (markersPosition.any { it == PointF(-1f, -1f) }) {
+                        emptyArray()
+                    } else {
+                        markersPosition / adjustedImageSize
+                    }
                 )
             }.also {
                 Log.v(TAG, it.toString())

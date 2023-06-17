@@ -19,11 +19,16 @@ Java_ir_erfansn_artouch_producer_detector_marker_ArUcoMarkerDetector_detectArUco
     cv::Mat grayFrame(height, width, CV_8UC1, pFrameBuffer);
     auto markers = aruconano::MarkerDetector::detect(grayFrame);
 
-    const int MARKER_COUNT = 4;
-    const int MAX_TRY_TO_DETECTION = 30;
+    const auto MARKER_COUNT = 4;
+    const auto MAX_TRY_TO_DETECTION = 30;
 
-    static float corners[MARKER_COUNT][2];
-    static int failedDetectionCounter = 0;
+    static float corners[MARKER_COUNT][2] = {
+        {-1.0f, -1.0f},
+        {-1.0f, -1.0f},
+        {-1.0f, -1.0f},
+        {-1.0f, -1.0f},
+    };
+    static auto failedDetectionCounter = 0;
 
     if (!markers.empty()) {
         failedDetectionCounter = 0;
@@ -36,21 +41,21 @@ Java_ir_erfansn_artouch_producer_detector_marker_ArUcoMarkerDetector_detectArUco
     } else if (++failedDetectionCounter == MAX_TRY_TO_DETECTION) {
         failedDetectionCounter = 0;
         for (auto &corner: corners) {
-            corner[0] = 0;
-            corner[1] = 0;
+            corner[0] = -1.0f;
+            corner[1] = -1.0f;
         }
     }
     LogD("Input image size (%d, %d)", width, height);
     LogD(
-            "Markers = (%f, %f) (%f, %f) (%f, %f) (%f, %f)",
-            corners[0][0],
-            corners[0][1],
-            corners[1][0],
-            corners[1][1],
-            corners[2][0],
-            corners[2][1],
-            corners[3][0],
-            corners[3][1]
+        "Markers = (%f, %f) (%f, %f) (%f, %f) (%f, %f)",
+        corners[0][0],
+        corners[0][1],
+        corners[1][0],
+        corners[1][1],
+        corners[2][0],
+        corners[2][1],
+        corners[3][0],
+        corners[3][1]
     );
 
     auto pointFClass = env->FindClass("android/graphics/PointF");
@@ -59,7 +64,6 @@ Java_ir_erfansn_artouch_producer_detector_marker_ArUcoMarkerDetector_detectArUco
         auto pointFConstructor = env->GetMethodID(pointFClass, "<init>", "(FF)V");
         auto point = env->NewObject(pointFClass, pointFConstructor, corners[i][0], corners[i][1]);
         env->SetObjectArrayElement(points, i, point);
-        env->DeleteLocalRef(point);
     }
     return points;
 }
@@ -78,30 +82,30 @@ Java_ir_erfansn_artouch_producer_detector_marker_ArUcoMarkerDetector_rotateYuvIm
 
     switch (rotationDegrees) {
         case 90:
-            for (int row = 0; row < inputHeight; ++row) {
-                for (int col = 0; col < inputWidth; ++col) {
-                    const int srcIndex = row * inputWidth + col;
-                    const int dstIndex = col * inputHeight + (inputHeight - row - 1);
+            for (auto row = 0; row < inputHeight; ++row) {
+                for (auto col = 1; col < inputWidth; ++col) {
+                    const auto srcIndex = row * inputWidth + col;
+                    const auto dstIndex = col * inputHeight + (inputHeight - row - 1);
                     outputData[dstIndex] = inputData[srcIndex];
                 }
             }
             break;
 
         case 180:
-            for (int row = 0; row < inputHeight; ++row) {
-                for (int col = 0; col < inputWidth; ++col) {
-                    const int srcIndex = row * inputWidth + col;
-                    const int dstIndex = (inputHeight - row - 1) * inputWidth + (inputWidth - col - 1);
+            for (auto row = 0; row < inputHeight; ++row) {
+                for (auto col = 0; col < inputWidth; ++col) {
+                    const auto srcIndex = row * inputWidth + col;
+                    const auto dstIndex = (inputHeight - row - 1) * inputWidth + (inputWidth - col - 1);
                     outputData[dstIndex] = inputData[srcIndex];
                 }
             }
             break;
 
         case 270:
-            for (int row = 0; row < inputHeight; ++row) {
-                for (int col = 0; col < inputWidth; ++col) {
-                    const int srcIndex = row * inputWidth + col;
-                    const int dstIndex = (inputWidth - col - 1) * inputHeight + row;
+            for (auto row = 0; row < inputHeight; ++row) {
+                for (auto col = 0; col < inputWidth; ++col) {
+                    const auto srcIndex = row * inputWidth + col;
+                    const auto dstIndex = (inputWidth - col - 1) * inputHeight + row;
                     outputData[dstIndex] = inputData[srcIndex];
                 }
             }
