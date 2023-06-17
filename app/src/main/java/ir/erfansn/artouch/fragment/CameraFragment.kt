@@ -42,7 +42,7 @@ class CameraFragment : Fragment() {
     private val backgroundExecutor = Executors.newFixedThreadPool(2)
 
     private lateinit var handDetector: ObjectDetector<HandDetectionResult>
-    private lateinit var markerDetector: ObjectDetector<MarkerDetectionResult>
+    private lateinit var markerDetector: ObjectDetector<MarkersDetectionResult>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,21 +71,21 @@ class CameraFragment : Fragment() {
             startCamera()
 
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    handDetector.result
-                        .catch {
-                            Log.e(TAG, "A error in Hand detector is occurred", it)
-                        }.collect {
-                            binding.handLandmarks.result = it
-                            Log.d(TAG, "Hand detection time inference: ${it.inferenceTime}")
-                        }
-                }
-                launch {
-                    markerDetector.result
-                        .collect {
-                            binding.markersPosition.result = it
-                            Log.d(TAG, "ArUco detection time inference: ${it.inferenceTime}")
-                        }
+                if (true) {
+                    launch {
+                        handDetector.result
+                            .collect {
+                                binding.handLandmarks.result = it
+                                Log.d(TAG, "Hand detection time inference: ${it.inferenceTime}")
+                            }
+                    }
+                    launch {
+                        markerDetector.result
+                            .collect {
+                                binding.markersPosition.result = it
+                                Log.d(TAG, "ArUco detection time inference: ${it.inferenceTime}")
+                            }
+                    }
                 }
 
                 launch {

@@ -12,13 +12,13 @@ import java.nio.ByteBuffer
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
-class ArUcoMarkerDetector : ObjectDetector<MarkerDetectionResult> {
+class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
 
     init {
         System.loadLibrary("aruco_detector")
     }
 
-    private val _result = MutableSharedFlow<MarkerDetectionResult>(extraBufferCapacity = 1)
+    private val _result = MutableSharedFlow<MarkersDetectionResult>(extraBufferCapacity = 1)
     override val result = _result.asSharedFlow()
 
     override fun detect(imageProxy: ImageProxy) {
@@ -33,10 +33,10 @@ class ArUcoMarkerDetector : ObjectDetector<MarkerDetectionResult> {
                         Size(imageProxy.height, imageProxy.width)
                     }
 
-                MarkerDetectionResult(
+                MarkersDetectionResult(
                     inferenceTime = inferenceTime,
                     inputImageSize = adjustedImageSize,
-                    markers = markers / adjustedImageSize
+                    positions = markersPosition / adjustedImageSize
                 )
             }.also {
                 Log.v(TAG, it.toString())

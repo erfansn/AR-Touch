@@ -31,27 +31,22 @@ class MarkersPositionView(context: Context?, attrs: AttributeSet?) : View(contex
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        result?.let {
-            val nonZeroMarkers = it.markers.filterNot { it.x == 0f || it.y == 0f }
-            if (nonZeroMarkers.isEmpty()) return
+        result?.let { (_, _, positions) ->
+            if (positions.isEmpty()) return
 
-            for (i in 1..nonZeroMarkers.size) {
-                val startPoint = nonZeroMarkers[i - 1]
-                val endPoint = nonZeroMarkers[i % nonZeroMarkers.size]
+            for (i in 1..positions.size) {
+                val startPoint = positions[i - 1]
+                val endPoint = positions[i % positions.size]
 
                 val (startX, startY) = startPoint.previewOptimized
                 val (endX, endY) = endPoint.previewOptimized
                 canvas.drawLine(startX, startY, endX, endY, linePaint)
             }
-            nonZeroMarkers.forEach { point ->
-                canvas.drawPoint(point, pointPaint)
+            positions.forEach { point ->
+                val (x, y) = point.previewOptimized
+                canvas.drawPoint(x, y, pointPaint)
             }
         }
-    }
-
-    private fun Canvas.drawPoint(pointF: PointF, paint: Paint) {
-        val (x, y) = pointF.previewOptimized
-        drawPoint(x, y, paint)
     }
 
     private val PointF.previewOptimized: Pair<Float, Float>
@@ -61,7 +56,7 @@ class MarkersPositionView(context: Context?, attrs: AttributeSet?) : View(contex
             return x * imageWidth * scaleFactor - widthSizeHalfDelta to y * imageHeight * scaleFactor - heightSizeHalfDelta
         }
 
-    var result: MarkerDetectionResult? = null
+    var result: MarkersDetectionResult? = null
         set(value) {
             field = value
             value ?: return
