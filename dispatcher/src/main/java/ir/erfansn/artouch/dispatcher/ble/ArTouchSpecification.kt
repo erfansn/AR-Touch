@@ -11,7 +11,7 @@ internal object ArTouchSpecification {
 
     const val NAME = "AR Touch"
     const val DESCRIPTION = "Add touch functionality to any surface of any size"
-    const val PROVIDER = "ES factory"
+    const val PROVIDER = "Erfan Sn"
     const val SUBCLASS = BluetoothHidDevice.SUBCLASS2_DIGITIZER_TABLET
 
     const val REPORT_ID: UByte = 0x01u
