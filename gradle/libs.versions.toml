@@ -17,6 +17,7 @@ androidxComposeCompiler = "1.4.7"
 androidxComposeBom = "2023.05.01"
 googleAccompanist = "0.30.1"
 androidxConstraintLayout = "1.0.1"
+androidxActivity = "1.7.2"
 
 [libraries]
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
@@ -42,6 +43,7 @@ androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 google-accompanist-themeadapter-m3 = { group = "com.google.accompanist", name = "accompanist-themeadapter-material3", version.ref = "googleAccompanist" }
 androidx-constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "androidxConstraintLayout" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 
 [bundles]
 camerax = ["androidx-camera-core", "androidx-camera-camera2", "androidx-camera-view", "androidx-camera-lifecycle"]
