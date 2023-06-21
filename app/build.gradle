@@ -58,7 +58,7 @@ dependencies {
     
     implementation libs.androidx.core
     implementation libs.androidx.appcompat
-    implementation libs.androidx.lifecycle.viewModel
+    implementation libs.androidx.lifecycle.viewmodel
     implementation libs.androidx.concurrent.futures
     // To prevent ListenableFuture conflict this dependency temporary is added
     implementation 'com.google.guava:guava:29.0-android'
@@ -74,6 +74,7 @@ dependencies {
     implementation libs.androidx.compose.ui.tooling.preview
     implementation libs.androidx.constraintlayout.compose
     implementation libs.androidx.activity.compose
+    implementation libs.androidx.lifecycle.viewmodel.compose
 
     implementation libs.google.accompanist.themeadapter.m3
 
