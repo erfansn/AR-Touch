@@ -15,6 +15,7 @@ import ir.erfansn.artouch.dispatcher.ble.ArTouchSpecification
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
@@ -33,6 +34,8 @@ internal class ArTouchPeripheralManager(
 
     private val _connectionState = MutableStateFlow(BleHidConnectionState.Disconnected)
     override val connectionState = _connectionState.asStateFlow()
+
+    private var isRegistered = false
 
     @OptIn(ExperimentalUnsignedTypes::class)
     override fun trySendReport(
@@ -55,21 +58,26 @@ internal class ArTouchPeripheralManager(
         repeat(MAX_CONNECTION_TRY) {
             if (hidProxy.connect(centralDevice)) return
         }
-        _connectionState.value = BleHidConnectionState.FailedToConnect
+        _connectionState.update { BleHidConnectionState.FailedToConnect }
     }
 
     override fun disconnect(centralDevice: BluetoothDevice) {
+        if (!::hidProxy.isInitialized) return
+
         hidProxy.disconnect(centralDevice)
     }
 
     override suspend fun registerDevice() = suspendCancellableCoroutine {
         val serviceListener = object : BluetoothProfile.ServiceListener {
             override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
+                Log.i(TAG, "onServiceConnected Called")
                 scope.launch {
                     hidProxy = proxy as BluetoothHidDevice
                     withTimeoutOrNull(2500) {
                         hidProxy.registerArTouch()
                     }?.let { _ ->
+                        if (!isRegistered) return@let
+
                         it.resume(Unit)
                     } ?: run {
                         it.cancel()
@@ -79,9 +87,11 @@ internal class ArTouchPeripheralManager(
 
             override fun onServiceDisconnected(profile: Int) {
                 Log.i(TAG, "The Bluetooth HID profile is disconnected")
+                isRegistered = false
             }
         }
         bluetoothAdapter.getProfileProxy(context, serviceListener, BluetoothProfile.HID_DEVICE)
+        isRegistered = true
     }
 
     private suspend fun BluetoothHidDevice.registerArTouch() = suspendCancellableCoroutine {
@@ -107,12 +117,15 @@ internal class ArTouchPeripheralManager(
                 override fun onConnectionStateChanged(device: BluetoothDevice?, state: Int) {
                     if (state == BluetoothProfile.STATE_DISCONNECTING) return
 
-                    _connectionState.value = when (state) {
-                        BluetoothProfile.STATE_DISCONNECTED -> BleHidConnectionState.Disconnected
-                        BluetoothProfile.STATE_CONNECTING -> BleHidConnectionState.Connecting
-                        BluetoothProfile.STATE_CONNECTED -> BleHidConnectionState.Connected
-                        else -> throw IllegalStateException()
+                    _connectionState.update {
+                        when (state) {
+                            BluetoothProfile.STATE_DISCONNECTED -> BleHidConnectionState.Disconnected
+                            BluetoothProfile.STATE_CONNECTING -> BleHidConnectionState.Connecting
+                            BluetoothProfile.STATE_CONNECTED -> BleHidConnectionState.Connected
+                            else -> throw IllegalStateException()
+                        }
                     }
+                    Log.d(TAG, "Bluetooth current state is ${_connectionState.value}")
                 }
 
                 override fun onAppStatusChanged(pluggedDevice: BluetoothDevice?, registered: Boolean) {
@@ -129,6 +142,7 @@ internal class ArTouchPeripheralManager(
 
         hidProxy.unregisterApp()
         bluetoothAdapter.closeProfileProxy(BluetoothProfile.HID_DEVICE, hidProxy)
+        isRegistered = false
     }
 
     companion object {
