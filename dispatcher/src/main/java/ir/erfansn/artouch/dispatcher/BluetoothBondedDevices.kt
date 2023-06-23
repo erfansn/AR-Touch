@@ -1,8 +1,8 @@
 package ir.erfansn.artouch.dispatcher
 
 import android.bluetooth.BluetoothDevice
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface BluetoothBondedDevices {
-    val devices: Flow<Set<BluetoothDevice>>
+    val devices: StateFlow<List<BluetoothDevice>>
 }
