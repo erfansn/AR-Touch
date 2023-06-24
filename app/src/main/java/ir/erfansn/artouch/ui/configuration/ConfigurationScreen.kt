@@ -1,6 +1,5 @@
 package ir.erfansn.artouch.ui.configuration
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothDevice
@@ -14,7 +13,6 @@ import android.provider.Settings
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,17 +55,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.edit
+import ir.erfansn.artouch.ui.configuration.ConfigurationFragment.Companion.BLUETOOTH_PERMISSIONS
+import ir.erfansn.artouch.ui.configuration.ConfigurationFragment.Companion.CAMERA_PERMISSION
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-
-private const val CAMERA_PERMISSION = Manifest.permission.CAMERA
-@RequiresApi(Build.VERSION_CODES.S)
-private val BLUETOOTH_PERMISSIONS = arrayOf(
-    Manifest.permission.BLUETOOTH_ADVERTISE,
-    Manifest.permission.BLUETOOTH_CONNECT,
-)
 
 @SuppressLint("MissingPermission")
 @Composable
