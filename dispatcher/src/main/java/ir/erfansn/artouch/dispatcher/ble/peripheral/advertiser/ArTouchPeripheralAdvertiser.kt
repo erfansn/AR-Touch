@@ -10,20 +10,18 @@ import android.bluetooth.le.BluetoothLeAdvertiser
 import android.content.Context
 import android.util.Log
 import androidx.core.content.getSystemService
-import androidx.lifecycle.LifecycleOwner
 import ir.erfansn.artouch.dispatcher.ble.ArTouchSpecification
 import ir.erfansn.artouch.dispatcher.ble.peripheral.ArTouchPeripheralManager
-import ir.erfansn.artouch.dispatcher.ble.peripheral.BleHidPeripheralRegistrar
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 @SuppressLint("MissingPermission")
-class ArTouchPeripheralAdvertiser(context: Context) : BleHidPeripheralAdvertiser {
+class ArTouchPeripheralAdvertiser(
+    context: Context,
+    private val scope: CoroutineScope,
+) : BleHidPeripheralAdvertiser {
 
-    private val scope = CoroutineScope(Dispatchers.IO)
-    private val arTouchPeripheralManager: BleHidPeripheralRegistrar = ArTouchPeripheralManager(
+    private val arTouchPeripheralManager = ArTouchPeripheralManager(
         context = context,
         scope = scope,
     )
@@ -68,10 +66,6 @@ class ArTouchPeripheralAdvertiser(context: Context) : BleHidPeripheralAdvertiser
         bleAdvertiser.stopAdvertising(advertiseCallback)
         arTouchPeripheralManager.unregisterDevice()
         Log.i(TAG, "Advertising stopped")
-    }
-
-    override fun onDestroy(owner: LifecycleOwner) {
-        scope.cancel()
     }
 
     companion object {

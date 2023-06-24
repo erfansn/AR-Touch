@@ -9,12 +9,11 @@ import androidx.core.graphics.component1
 import androidx.core.graphics.component2
 import androidx.core.graphics.times
 import androidx.core.graphics.toPoint
-import androidx.lifecycle.LifecycleOwner
 import ir.erfansn.artouch.dispatcher.ble.ArTouchSpecification
 import ir.erfansn.artouch.dispatcher.ble.peripheral.ArTouchPeripheralManager
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -22,9 +21,10 @@ import kotlinx.coroutines.withContext
 class DefaultArTouchPeripheralDevice(
     context: Context,
     private val centralDevice: BluetoothDevice,
+    private val scope: CoroutineScope,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ArTouchPeripheralDevice {
 
-    private val scope = CoroutineScope(Dispatchers.IO)
     private val arTouchPeripheralManager = ArTouchPeripheralManager(
         context = context,
         scope = scope,
@@ -32,7 +32,7 @@ class DefaultArTouchPeripheralDevice(
 
     @OptIn(ExperimentalUnsignedTypes::class)
     override suspend fun dispatchTouch(tapped: Boolean, point: PointF) {
-        withContext(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             require(point.x in 0f..1f && point.y in 0f..1f)
             val (x, y) = (point * 100_00f).toPoint()
             val (lx, mx) = x.latestAndMostSignificantByte()
@@ -72,10 +72,6 @@ class DefaultArTouchPeripheralDevice(
     override fun disconnect() {
         arTouchPeripheralManager.disconnect(centralDevice)
         arTouchPeripheralManager.unregisterDevice()
-    }
-
-    override fun onDestroy(owner: LifecycleOwner) {
-        scope.cancel()
     }
 
     companion object {
