@@ -21,54 +21,43 @@ class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
     private val _result = MutableSharedFlow<MarkersDetectionResult>(extraBufferCapacity = 1)
     override val result = _result.asSharedFlow()
 
+    @OptIn(ExperimentalTime::class)
     override fun detect(imageProxy: ImageProxy) {
         require(imageProxy.format == ImageFormat.YUV_420_888) { "Image format must be YUV 420 888." }
 
-        _result.tryEmit(
-            detectArUco(imageProxy).let { (inferenceTime, markersPosition) ->
-                val adjustedImageSize =
-                    if (imageProxy.imageInfo.rotationDegrees % 180 == 0) {
-                        Size(imageProxy.width, imageProxy.height)
-                    } else {
-                        Size(imageProxy.height, imageProxy.width)
-                    }
-
-                MarkersDetectionResult(
-                    inferenceTime = inferenceTime,
-                    inputImageSize = adjustedImageSize,
-                    positions = if (markersPosition.any { it == PointF(-1f, -1f) }) {
-                        emptyArray()
-                    } else {
-                        markersPosition / adjustedImageSize
-                    }
-                )
-            }.also {
-                Log.v(TAG, it.toString())
-            }
-        )
-        imageProxy.close()
-    }
-
-    @OptIn(ExperimentalTime::class)
-    private fun detectArUco(imageProxy: ImageProxy): Pair<Long, Array<PointF>> {
-        val markers: Array<PointF>
-        val takenTime = measureTime {
-            val inputWidth = imageProxy.width
-            val inputHeight = imageProxy.height
-
-            val (outputWidth, outputHeight, rotatedImageBuffer) = rotateYuvImage(
-                width = inputWidth,
-                height = inputHeight,
+        val adjustedImageSize: Size
+        val markersPosition: Array<PointF>
+        val inferenceTime = measureTime {
+            val rotatedBuffer = rotateYuvImage(
+                width = imageProxy.width,
+                height = imageProxy.height,
                 rotationDegrees = imageProxy.imageInfo.rotationDegrees,
                 inputBuffer = imageProxy.planes[0].buffer,
             )
-            markers = detectArUco(
-                width = outputWidth,
-                height = outputHeight,
-                frameBuffer = rotatedImageBuffer,
-            )
+
+            rotatedBuffer.also { (outputWidth, outputHeight, rotatedImageBuffer) ->
+                adjustedImageSize = Size(outputWidth, outputHeight)
+                markersPosition = detectArUco(
+                    width = outputWidth,
+                    height = outputHeight,
+                    frameBuffer = rotatedImageBuffer,
+                )
+            }
         }
-        return takenTime.inWholeMilliseconds to markers
+
+        MarkersDetectionResult(
+            inferenceTime = inferenceTime.inWholeMilliseconds,
+            inputImageSize = adjustedImageSize,
+            positions = if (markersPosition.any { it == PointF(-1f, -1f) }) {
+                emptyArray()
+            } else {
+                markersPosition / adjustedImageSize
+            }
+        ).also {
+            Log.v(TAG, it.toString())
+        }.run(_result::tryEmit)
+
+        imageProxy.close()
     }
 
     private fun rotateYuvImage(
@@ -77,11 +66,10 @@ class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
         rotationDegrees: Int,
         inputBuffer: ByteBuffer,
     ): Triple<Int, Int, ByteBuffer> {
-        require(rotationDegrees in listOf(0, 90, 180, 270))
-
         val (outputWidth, outputHeight) = when (rotationDegrees) {
             90, 270 -> height to width
-            else -> width to height
+            0, 180 -> width to height
+            else -> throw IllegalStateException()
         }
         val rotatedImageBuffer = ByteBuffer.allocateDirect(outputWidth * outputHeight)
 
