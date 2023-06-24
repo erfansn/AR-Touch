@@ -73,7 +73,13 @@ class ConfigurationFragment : Fragment() {
                     },
                     onStartArTouchAdvertiser = viewModel::startArTouchAdvertising,
                     onNavigateToCameraFragment = { debugMode, centralDevice ->
-
+                        findNavController().navigate(
+                            resId = R.id.action_configurationFragment_to_cameraFragment,
+                            args = bundleOf(
+                                TouchFragment.DEBUG_MODE_KEY to debugMode,
+                                TouchFragment.CENTRAL_DEVICE_KEY to centralDevice,
+                            )
+                        )
                     }
                 )
             }
