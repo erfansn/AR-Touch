@@ -40,8 +40,8 @@ class MediaPipeHandDetector(
         val options =
             HandLandmarker.HandLandmarkerOptions.builder()
                 .setMinHandPresenceConfidence(0.75f)
-                .setMinHandDetectionConfidence(0.75f)
-                .setMinTrackingConfidence(0.65f)
+                .setMinHandDetectionConfidence(0.60f)
+                .setMinTrackingConfidence(0.5f)
                 .setBaseOptions(baseOptions)
                 .setNumHands(1)
                 .setRunningMode(RunningMode.LIVE_STREAM)

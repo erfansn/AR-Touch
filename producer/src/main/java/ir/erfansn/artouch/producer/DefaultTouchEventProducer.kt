@@ -110,8 +110,8 @@ class DefaultTouchEventProducer(
     companion object {
         private const val TAG = "DefaultTouchEventProducer"
 
-        private const val TOLERANCE = 0.3f
-        private const val MIN_TOUCHING_ANGLE = 10f
+        private const val TOLERANCE = 0.35f
+        private const val MIN_TOUCHING_ANGLE = 12f
         private const val MIN_TOUCHING_LENGTH = 0.0385f
     }
 }
