@@ -1,11 +1,12 @@
 package ir.erfansn.artouch
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
+import android.view.Window
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
-operator fun SharedPreferences.set(key: String, value: Boolean) = edit {
-    putBoolean(key, value)
+fun Window.disableImmersiveMode() {
+    WindowCompat.getInsetsController(this, decorView).apply {
+        show(WindowInsetsCompat.Type.systemBars())
+    }
 }
-
-operator fun SharedPreferences.get(key: String, default: Boolean = false) =
-    getBoolean(key, default)
