@@ -1,18 +1,29 @@
 package ir.erfansn.artouch.ui.touch
 
+import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
+import android.util.TypedValue.COMPLEX_UNIT_DIP
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
+import android.view.WindowManager
+import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.DisplayOrientedMeteringPointFactory
+import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.core.resolutionselector.AspectRatioStrategy
 import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.concurrent.futures.await
+import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -23,9 +34,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
+import com.google.android.material.snackbar.Snackbar
 import ir.erfansn.artouch.R
 import ir.erfansn.artouch.databinding.FragmentTouchBinding
 import ir.erfansn.artouch.dispatcher.ble.peripheral.BleHidConnectionState
+import ir.erfansn.artouch.enableImmersiveMode
 import ir.erfansn.artouch.ui.configuration.ConfigurationFragment.Companion.allPermissionsGranted
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
@@ -195,7 +209,7 @@ class TouchFragment : Fragment() {
             .build()
 
         unbindAll()
-        bindToLifecycle(
+        val camera = bindToLifecycle(
             viewLifecycleOwner,
             CameraSelector.DEFAULT_BACK_CAMERA,
             preview,
@@ -203,10 +217,73 @@ class TouchFragment : Fragment() {
             markerAnalysis
         )
 
+        camera.setupFocusController()
         preview?.setSurfaceProvider(binding.preview.surfaceProvider)
         handAnalysis?.setAnalyzer(backgroundExecutor, viewModel::detectHand)
         markerAnalysis?.setAnalyzer(backgroundExecutor, viewModel::detectMarker)
     }
+
+    private fun Camera.setupFocusController() {
+        val gestureDetector = GestureDetectorCompat(requireContext(), object : GestureDetector.SimpleOnGestureListener() {
+            private var isEnableManuallyFocus = false
+
+            @SuppressLint("ShowToast")
+            override fun onLongPress(event: MotionEvent) {
+                if (isEnableManuallyFocus) {
+                    cameraControl.cancelFocusAndMetering()
+                    Snackbar.make(binding.root, getString(R.string.enable_auto_focus_mode), LENGTH_SHORT).showSafely()
+                    isEnableManuallyFocus = false
+                }
+            }
+
+            @SuppressLint("ShowToast")
+            override fun onSingleTapConfirmed(event: MotionEvent): Boolean {
+                val meteringPoint = DisplayOrientedMeteringPointFactory(
+                    binding.preview.display,
+                    cameraInfo,
+                    binding.preview.width.toFloat(),
+                    binding.preview.height.toFloat(),
+                )
+                val focusMeteringAction =
+                    FocusMeteringAction.Builder(meteringPoint.createPoint(event.x, event.y))
+                        .disableAutoCancel()
+                        .build()
+                cameraControl.startFocusAndMetering(focusMeteringAction)
+                if (!isEnableManuallyFocus) {
+                    Snackbar.make(binding.root, getString(R.string.enable_manually_focus_mode), LENGTH_SHORT)
+                        .setAction(getString(R.string.ok), null)
+                        .showSafely()
+                    isEnableManuallyFocus = true
+                }
+                return true
+            }
+        })
+        binding.preview.setOnTouchListener @SuppressLint("ClickableViewAccessibility") { _, event ->
+            gestureDetector.onTouchEvent(event)
+            true
+        }
+    }
+
+    private fun Snackbar.showSafely() {
+        ViewCompat.setOnApplyWindowInsetsListener(view) { touchPosition, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemGestures())
+
+            touchPosition.updateLayoutParams<MarginLayoutParams> {
+                bottomMargin = insets.bottom
+                leftMargin += 12.dp
+                rightMargin += 12.dp
+            }
+            WindowInsetsCompat.CONSUMED
+        }
+        show()
+    }
+
+    private val Int.dp
+        get() = TypedValue.applyDimension(
+            COMPLEX_UNIT_DIP,
+            toFloat(),
+            requireContext().resources.displayMetrics
+        ).toInt()
 
     override fun onDestroyView() {
         super.onDestroyView()
