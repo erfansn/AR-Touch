@@ -285,6 +285,13 @@ class TouchFragment : Fragment() {
             requireContext().resources.displayMetrics
         ).toInt()
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        preview?.targetRotation = binding.preview.display.rotation
+        handAnalysis?.targetRotation = binding.preview.display.rotation
+        markerAnalysis?.targetRotation = binding.preview.display.rotation
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
