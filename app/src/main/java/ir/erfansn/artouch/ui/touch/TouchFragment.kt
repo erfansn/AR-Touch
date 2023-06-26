@@ -162,6 +162,14 @@ class TouchFragment : Fragment() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        requireActivity().window.apply {
+            addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            enableImmersiveMode()
+        }
+    }
+
     private suspend fun startCamera() {
         val cameraProvider = ProcessCameraProvider.getInstance(requireContext()).await()
         cameraProvider.rebindUseCases()
