@@ -19,11 +19,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.fragment.findNavController
 import com.google.accompanist.themeadapter.material3.Mdc3Theme
+import ir.erfansn.artouch.R
 import ir.erfansn.artouch.dispatcher.ble.peripheral.advertiser.ArTouchPeripheralAdvertiser
+import ir.erfansn.artouch.ui.touch.TouchFragment
 
 class ConfigurationFragment : Fragment() {
 
@@ -74,7 +78,7 @@ class ConfigurationFragment : Fragment() {
                     onStartArTouchAdvertiser = viewModel::startArTouchAdvertising,
                     onNavigateToCameraFragment = { debugMode, centralDevice ->
                         findNavController().navigate(
-                            resId = R.id.action_configurationFragment_to_cameraFragment,
+                            resId = R.id.action_configurationFragment_to_touchFragment,
                             args = bundleOf(
                                 TouchFragment.DEBUG_MODE_KEY to debugMode,
                                 TouchFragment.CENTRAL_DEVICE_KEY to centralDevice,

@@ -10,16 +10,12 @@
         android:name="ir.erfansn.artouch.ui.configuration.ConfigurationFragment"
         android:label="Configuration Fragment">
         <action
-            android:id="@+id/action_configurationFragment_to_cameraFragment"
-            app:destination="@id/camera_fragment" />
+            android:id="@+id/action_configurationFragment_to_touchFragment"
+            app:destination="@id/touch_fragment" />
     </fragment>
     <fragment
-        android:id="@+id/camera_fragment"
-        android:name="ir.erfansn.artouch.fragment.CameraFragment"
-        android:label="Camera Fragment"
-        tools:layout="@layout/fragment_camera">
-        <action
-            android:id="@+id/action_cameraFragment_to_permissionsFragment"
-            app:destination="@id/configuration_fragment" />
-    </fragment>
+        android:id="@+id/touch_fragment"
+        android:name="ir.erfansn.artouch.ui.touch.TouchFragment"
+        android:label="Touch Fragment"
+        tools:layout="@layout/fragment_touch"/>
 </navigation>
