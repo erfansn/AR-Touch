@@ -51,10 +51,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.edit
+import ir.erfansn.artouch.R
 import ir.erfansn.artouch.ui.configuration.ConfigurationFragment.Companion.BLUETOOTH_PERMISSIONS
 import ir.erfansn.artouch.ui.configuration.ConfigurationFragment.Companion.CAMERA_PERMISSION
 import kotlinx.coroutines.CoroutineScope
@@ -96,25 +98,25 @@ fun ConfigurationScreen(
                             onGranted = onPromptToEnableBluetooth,
                             onRationaleShow = {
                                 scope.launch {
-                                    noQueueSnackbarShower.showSnackbar("This permission is necessary")
+                                    noQueueSnackbarShower.showSnackbar(context.getString(R.string.bluetooth_permissions_rationale))
                                 }
                             },
                             onPermanentlyDenied = {
                                 scope.launch {
                                     val result = noQueueSnackbarShower.showSnackbar(
-                                        message = "Go to app setting to enable it",
-                                        actionLabel = "OK",
+                                        message = context.getString(R.string.permanently_denied_permission_message),
+                                        actionLabel = context.getString(R.string.ok),
                                         duration = SnackbarDuration.Short
                                     )
                                     if (result == SnackbarResult.ActionPerformed) context.openAppSettings()
                                 }
                             }
                         ) {
-                            Text(text = "Turn on Bluetooth")
+                            Text(text = stringResource(R.string.turn_on_bluetooth))
                         }
                     } else {
                         Button(onClick = onPromptToEnableBluetooth) {
-                            Text(text = "Turn on Bluetooth")
+                            Text(text = stringResource(R.string.turn_on_bluetooth))
                         }
                     }
                 }
@@ -126,21 +128,21 @@ fun ConfigurationScreen(
                             onGranted = onStartArTouchAdvertiser,
                             onRationaleShow = {
                                 scope.launch {
-                                    noQueueSnackbarShower.showSnackbar("This permission is necessary")
+                                    noQueueSnackbarShower.showSnackbar(context.getString(R.string.bluetooth_permissions_rationale))
                                 }
                             },
                             onPermanentlyDenied = {
                                 scope.launch {
                                     val result = noQueueSnackbarShower.showSnackbar(
-                                        message = "Go to app setting to enable it",
-                                        actionLabel = "OK",
+                                        message = context.getString(R.string.permanently_denied_permission_message),
+                                        actionLabel = context.getString(R.string.ok),
                                         duration = SnackbarDuration.Short
                                     )
                                     if (result == SnackbarResult.ActionPerformed) context.openAppSettings()
                                 }
                             }
                         ) {
-                            Text(text = "Request Bluetooth permissions")
+                            Text(text = stringResource(R.string.request_bluetooth_permissions))
                         }
                     } else {
                         LaunchedEffect(Unit) {
@@ -156,18 +158,23 @@ fun ConfigurationScreen(
                     ) {
                         Text(
                             modifier = Modifier.padding(vertical = 16.dp),
-                            text = "Advertising Mode",
+                            text = stringResource(R.string.advertising_mode),
                             style = MaterialTheme.typography.titleLarge
                         )
 
                         var selectedDeviceItem by rememberSaveable {
                             mutableStateOf<BluetoothDevice?>(null)
                         }
+                        LaunchedEffect(selectedDeviceItem, bluetoothBondedDevices) {
+                            if (selectedDeviceItem !in bluetoothBondedDevices) {
+                                selectedDeviceItem = null
+                            }
+                        }
                         Box(modifier = Modifier.weight(1f)) {
                             if (bluetoothBondedDevices.isEmpty()) {
                                 Text(
                                     modifier = Modifier.align(Alignment.Center),
-                                    text = "Bonded devices list is empty!"
+                                    text = stringResource(R.string.bonded_devices_list_is_empty)
                                 )
                             } else {
                                 LazyColumn {
@@ -195,7 +202,7 @@ fun ConfigurationScreen(
                             }
                         }
 
-                        var shouldShowDebuggingStuff by rememberSaveable { mutableStateOf(true) }
+                        var shouldShowDebuggingStuff by rememberSaveable { mutableStateOf(false) }
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -203,7 +210,7 @@ fun ConfigurationScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(text = "Show debugging stuff")
+                            Text(text = stringResource(R.string.show_debugging_stuff))
                             Switch(
                                 checked = shouldShowDebuggingStuff,
                                 onCheckedChange = {
@@ -220,20 +227,14 @@ fun ConfigurationScreen(
                                 .padding(bottom = paddingFromBottom),
                             permissions = listOf(CAMERA_PERMISSION),
                             onGranted = {
-                                if (selectedDeviceItem !in bluetoothBondedDevices) {
-                                    scope.launch {
-                                        snackbarShowed = true
-                                        noQueueSnackbarShower.showSnackbar(message = "You want to connect to anything?")
-                                        snackbarShowed = false
-                                    }
-                                    return@PermissionsRequestButton
-                                }
                                 selectedDeviceItem?.let {
                                     onNavigateToCameraFragment(shouldShowDebuggingStuff, it)
                                 } ?: run {
                                     scope.launch {
                                         snackbarShowed = true
-                                        noQueueSnackbarShower.showSnackbar(message = "Must select a device")
+                                        noQueueSnackbarShower.showSnackbar(message = context.getString(
+                                            R.string.must_select_a_device)
+                                        )
                                         snackbarShowed = false
                                     }
                                 }
@@ -241,7 +242,7 @@ fun ConfigurationScreen(
                             onRationaleShow = {
                                 scope.launch {
                                     snackbarShowed = true
-                                    noQueueSnackbarShower.showSnackbar("This permission is necessary")
+                                    noQueueSnackbarShower.showSnackbar(context.getString(R.string.camera_permissions_rationale))
                                     snackbarShowed = false
                                 }
                             },
@@ -249,8 +250,8 @@ fun ConfigurationScreen(
                                 scope.launch {
                                     snackbarShowed = true
                                     val result = noQueueSnackbarShower.showSnackbar(
-                                        message = "Go to app setting to enable it",
-                                        actionLabel = "OK",
+                                        message = context.getString(R.string.permanently_denied_permission_message),
+                                        actionLabel = context.getString(R.string.ok),
                                         duration = SnackbarDuration.Short
                                     )
                                     if (result == SnackbarResult.ActionPerformed) context.openAppSettings()
@@ -258,7 +259,7 @@ fun ConfigurationScreen(
                                 }
                             }
                         ) {
-                            Text(text = "Start AR Touch")
+                            Text(text = stringResource(R.string.start_ar_touch))
                         }
                     }
                 }
@@ -346,8 +347,8 @@ fun rememberPermissionsRequestLauncher(
     var shownRationale by remember { mutableStateOf(false) }
     return rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
-    ) {
-        val result = it.mapValues { (_, isGranted) -> PermissionStatus(isGranted) }
+    ) { permissionsResult ->
+        val result = permissionsResult.mapValues { (_, isGranted) -> PermissionStatus(isGranted) }
         val permissions = result.keys.toList()
         val permissionsStatus = result.values.toList()
 

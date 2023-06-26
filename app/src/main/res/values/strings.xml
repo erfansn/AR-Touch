@@ -1,10 +1,31 @@
 <resources>
     <string name="app_name">AR Touch</string>
 
-    <string name="camera_permission_required">Camera access is required to display the camera preview.</string>
-    <string name="granting_camera_permission_from_settings">This app requires granting the camera permission from app settings</string>
-    <string name="preference_permissions_rationale_shown">permissions_rationale_shown</string>
+    <!-- ui/configuration -->
+    <string name="enable_auto_focus_mode">Enable auto focus mode</string>
+    <string name="enable_manually_focus_mode">To disable manually focus do long press on screen</string>
+    <string name="bluetooth_permissions_rationale">Touch event dispatching is only possible with the help of BLE</string>
+    <string name="camera_permissions_rationale">Touch event production is only possible by analyzing the environment</string>
+    <string name="permanently_denied_permission_message">Go to app setting to allow it</string>
+    <string name="turn_on_bluetooth">Turn on Bluetooth</string>
+    <string name="request_bluetooth_permissions">Request Bluetooth permissions</string>
+    <string name="advertising_mode">Advertising Mode</string>
+    <string name="bonded_devices_list_is_empty">Bonded devices list is empty!</string>
+    <string name="show_debugging_stuff">Show debugging stuff</string>
+    <string name="must_select_a_device">Must select a device</string>
+    <string name="start_ar_touch">Start AR Touch</string>
+
+    <!-- ui/touch -->
+    <string name="reconnect">Reconnect</string>
+    <string name="device_is_disconnected">Your device isn\'t currently connected to a central device</string>
+    <string name="select_another_device">Select another device</string>
+    <string name="connecting">Connecting…</string>
+    <string name="cancel">Cancel</string>
+    <string name="error_when_connecting">An error occurred when connecting</string>
+    <string name="touch_event">(%1$.4f, %2$.4f) is %3$s</string>
+    <string name="pressed">pressed</string>
+    <string name="released">released</string>
+
+    <!-- common -->
     <string name="ok">OK</string>
-    <string name="go">GO</string>
-    <string name="touch_position">Touch position (%.4f, %.4f)</string>
 </resources>
