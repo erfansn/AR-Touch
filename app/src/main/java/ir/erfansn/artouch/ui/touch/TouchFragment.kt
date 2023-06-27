@@ -34,6 +34,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.android.material.snackbar.Snackbar
 import ir.erfansn.artouch.R
@@ -169,7 +170,7 @@ class TouchFragment : Fragment() {
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.touchEvent) { touchPosition, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemGestures())
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout() or WindowInsetsCompat.Type.statusBars())
 
             touchPosition.updateLayoutParams<MarginLayoutParams> { topMargin = insets.top }
             WindowInsetsCompat.CONSUMED
@@ -225,14 +226,14 @@ class TouchFragment : Fragment() {
 
     private fun Camera.setupFocusController() {
         val gestureDetector = GestureDetectorCompat(requireContext(), object : GestureDetector.SimpleOnGestureListener() {
-            private var isEnableManuallyFocus = false
+            private var isManuallyFocusEnable = false
 
             @SuppressLint("ShowToast")
             override fun onLongPress(event: MotionEvent) {
-                if (isEnableManuallyFocus) {
+                if (isManuallyFocusEnable) {
                     cameraControl.cancelFocusAndMetering()
                     Snackbar.make(binding.root, getString(R.string.enable_auto_focus_mode), LENGTH_SHORT).showSafely()
-                    isEnableManuallyFocus = false
+                    isManuallyFocusEnable = false
                 }
             }
 
@@ -249,11 +250,9 @@ class TouchFragment : Fragment() {
                         .disableAutoCancel()
                         .build()
                 cameraControl.startFocusAndMetering(focusMeteringAction)
-                if (!isEnableManuallyFocus) {
-                    Snackbar.make(binding.root, getString(R.string.enable_manually_focus_mode), LENGTH_SHORT)
-                        .setAction(getString(R.string.ok), null)
-                        .showSafely()
-                    isEnableManuallyFocus = true
+                if (!isManuallyFocusEnable) {
+                    Snackbar.make(binding.root, getString(R.string.enable_manually_focus_mode), LENGTH_LONG).showSafely()
+                    isManuallyFocusEnable = true
                 }
                 return true
             }
@@ -265,13 +264,13 @@ class TouchFragment : Fragment() {
     }
 
     private fun Snackbar.showSafely() {
-        ViewCompat.setOnApplyWindowInsetsListener(view) { touchPosition, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(view) { snackbar, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemGestures())
 
-            touchPosition.updateLayoutParams<MarginLayoutParams> {
+            snackbar.updateLayoutParams<MarginLayoutParams> {
                 bottomMargin = insets.bottom
-                leftMargin += 12.dp
-                rightMargin += 12.dp
+                leftMargin = insets.left + 12.dp
+                rightMargin = insets.right + 12.dp
             }
             WindowInsetsCompat.CONSUMED
         }
