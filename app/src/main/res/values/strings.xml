@@ -2,7 +2,7 @@
     <string name="app_name">AR Touch</string>
 
     <!-- ui/configuration -->
-    <string name="enable_auto_focus_mode">Enable auto focus mode</string>
+    <string name="auto_focus_mode_enabled">Auto focus mode enabled</string>
     <string name="enable_manually_focus_mode">To disable manually focus do long press on screen</string>
     <string name="bluetooth_permissions_rationale">Touch event dispatching is only possible with the help of BLE</string>
     <string name="camera_permissions_rationale">Touch event production is only possible by analyzing the environment</string>

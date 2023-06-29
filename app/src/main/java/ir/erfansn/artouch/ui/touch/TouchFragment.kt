@@ -235,7 +235,7 @@ class TouchFragment : Fragment() {
             override fun onLongPress(event: MotionEvent) {
                 if (isManuallyFocusEnable) {
                     cameraControl.cancelFocusAndMetering()
-                    Snackbar.make(binding.root, getString(R.string.enable_auto_focus_mode), LENGTH_SHORT).showSafely()
+                    Snackbar.make(binding.root, getString(R.string.auto_focus_mode_enabled), LENGTH_SHORT).showSafely()
                     isManuallyFocusEnable = false
                 }
             }
