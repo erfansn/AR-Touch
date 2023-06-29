@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
-import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -27,6 +25,10 @@ import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.marginBottom
+import androidx.core.view.marginLeft
+import androidx.core.view.marginRight
+import androidx.core.view.marginTop
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -169,10 +171,11 @@ class TouchFragment : Fragment() {
             }
         }
 
+        val touchEventTopMargin = binding.touchEvent.marginTop
         ViewCompat.setOnApplyWindowInsetsListener(binding.touchEvent) { touchPosition, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout() or WindowInsetsCompat.Type.statusBars())
 
-            touchPosition.updateLayoutParams<MarginLayoutParams> { topMargin = insets.top }
+            touchPosition.updateLayoutParams<MarginLayoutParams> { topMargin = touchEventTopMargin + insets.top }
             WindowInsetsCompat.CONSUMED
         }
     }
@@ -264,25 +267,21 @@ class TouchFragment : Fragment() {
     }
 
     private fun Snackbar.showSafely() {
+        val snackbarLeftMargin = view.marginLeft
+        val snackbarRightMargin = view.marginRight
+        val snackbarBottomMargin = view.marginBottom
         ViewCompat.setOnApplyWindowInsetsListener(view) { snackbar, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemGestures())
 
             snackbar.updateLayoutParams<MarginLayoutParams> {
-                bottomMargin = insets.bottom
-                leftMargin = insets.left + 12.dp
-                rightMargin = insets.right + 12.dp
+                bottomMargin = snackbarBottomMargin + insets.bottom
+                leftMargin = snackbarLeftMargin + insets.left
+                rightMargin = snackbarRightMargin + insets.right
             }
             WindowInsetsCompat.CONSUMED
         }
         show()
     }
-
-    private val Int.dp
-        get() = TypedValue.applyDimension(
-            COMPLEX_UNIT_DIP,
-            toFloat(),
-            requireContext().resources.displayMetrics
-        ).toInt()
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
