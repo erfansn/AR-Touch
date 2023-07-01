@@ -2,21 +2,28 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base",
-    "group:all",
     "schedule:daily"
   ],
   "packageRules": [
     {
-      "matchPackagePatterns": [
-        "androidx.compose.compiler:compiler"
-      ],
-      "groupName": "kotlin"
+      "matchPackagePatterns": ["*"],
+      "excludePackagePatterns": ["com.google.guava:guava"],
+      "groupName": "all dependencies",
+      "groupSlug": "all"
+    },
+    {
+      "matchDatasources": ["gradle-version"],
+      "matchPackagePatterns": ["com.android.*"],
+      "groupName": "gradle related stuffs",
+      "groupSlug": "gradle"
     },
     {
       "matchPackagePatterns": [
-        "org.jetbrains.kotlin.*"
+        "org.jetbrains.kotlin.*",
+        "androidx.compose.compiler:compiler"
       ],
-      "groupName": "kotlin"
+      "groupName": "kotlin related stuffs",
+      "groupSlug": "kotlin"
     }
   ]
 }
