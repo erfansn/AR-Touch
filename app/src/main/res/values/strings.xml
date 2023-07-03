@@ -4,9 +4,9 @@
     <!-- ui/configuration -->
     <string name="auto_focus_mode_enabled">Auto focus mode enabled</string>
     <string name="enable_manually_focus_mode">To disable manually focus do long press on screen</string>
-    <string name="bluetooth_permissions_rationale">Touch event dispatching is only possible with the help of BLE</string>
-    <string name="camera_permissions_rationale">Touch event production is only possible by analyzing the environment</string>
-    <string name="permanently_denied_permission_message">Go to app setting to allow it</string>
+    <string name="bluetooth_permissions_rationale">To dispatch the touch event, required</string>
+    <string name="camera_permissions_rationale">To analyze the environment, required</string>
+    <string name="permanently_denied_permission_message">Please go to app setting to allow them</string>
     <string name="turn_on_bluetooth">Turn on Bluetooth</string>
     <string name="request_bluetooth_permissions">Request Bluetooth permissions</string>
     <string name="advertising_mode">Advertising Mode</string>
