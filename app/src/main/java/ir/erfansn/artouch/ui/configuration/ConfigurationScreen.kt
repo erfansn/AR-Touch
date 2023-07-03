@@ -50,7 +50,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,9 +61,6 @@ import androidx.core.content.edit
 import ir.erfansn.artouch.R
 import ir.erfansn.artouch.ui.configuration.ConfigurationFragment.Companion.BLUETOOTH_PERMISSIONS
 import ir.erfansn.artouch.ui.configuration.ConfigurationFragment.Companion.CAMERA_PERMISSION
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @SuppressLint("MissingPermission")
@@ -73,9 +72,22 @@ fun ConfigurationScreen(
     onPromptToEnableBluetooth: () -> Unit = { },
     bluetoothBondedDevices: List<BluetoothDevice> = emptyList(),
 ) {
+    var snackbarHeight by remember { mutableStateOf(0.dp) }
+    val paddingFromBottom by animateDpAsState(snackbarHeight)
     val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(uiState) {
+        snackbarHostState.currentSnackbarData?.dismiss()
+    }
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        snackbarHost = {
+            val density = LocalDensity.current
+            SnackbarHost(
+                modifier = Modifier.onSizeChanged {
+                    snackbarHeight = with(density) { it.height.toDp() }
+                },
+                hostState = snackbarHostState
+            )
+        },
         contentWindowInsets = WindowInsets.safeContent,
     ) { contentPadding ->
         Box(
@@ -86,10 +98,6 @@ fun ConfigurationScreen(
         ) {
             val scope = rememberCoroutineScope()
             val context = LocalContext.current
-            val noQueueSnackbarShower = remember { NoQueueSnackbarShower(scope, snackbarHostState) }
-            LaunchedEffect(uiState) {
-                noQueueSnackbarShower.cancelImmediately()
-            }
             when (uiState) {
                 ConfigurationUiState.DisableBluetooth -> {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -98,12 +106,12 @@ fun ConfigurationScreen(
                             onGranted = onPromptToEnableBluetooth,
                             onRationaleShow = {
                                 scope.launch {
-                                    noQueueSnackbarShower.showSnackbar(context.getString(R.string.bluetooth_permissions_rationale))
+                                    snackbarHostState.showSnackbarImmediately(context.getString(R.string.bluetooth_permissions_rationale))
                                 }
                             },
                             onPermanentlyDenied = {
                                 scope.launch {
-                                    val result = noQueueSnackbarShower.showSnackbar(
+                                    val result = snackbarHostState.showSnackbarImmediately(
                                         message = context.getString(R.string.permanently_denied_permission_message),
                                         actionLabel = context.getString(R.string.ok),
                                         duration = SnackbarDuration.Short
@@ -128,12 +136,12 @@ fun ConfigurationScreen(
                             onGranted = onStartArTouchAdvertiser,
                             onRationaleShow = {
                                 scope.launch {
-                                    noQueueSnackbarShower.showSnackbar(context.getString(R.string.bluetooth_permissions_rationale))
+                                    snackbarHostState.showSnackbarImmediately(context.getString(R.string.bluetooth_permissions_rationale))
                                 }
                             },
                             onPermanentlyDenied = {
                                 scope.launch {
-                                    val result = noQueueSnackbarShower.showSnackbar(
+                                    val result = snackbarHostState.showSnackbarImmediately(
                                         message = context.getString(R.string.permanently_denied_permission_message),
                                         actionLabel = context.getString(R.string.ok),
                                         duration = SnackbarDuration.Short
@@ -219,8 +227,6 @@ fun ConfigurationScreen(
                             )
                         }
 
-                        var snackbarShowed by remember { mutableStateOf(false) }
-                        val paddingFromBottom by animateDpAsState(targetValue = if (snackbarShowed) 52.dp else 0.dp)
                         PermissionsRequestButton(
                             modifier = Modifier
                                 .padding(vertical = 16.dp)
@@ -231,31 +237,25 @@ fun ConfigurationScreen(
                                     onNavigateToCameraFragment(shouldShowDebuggingStuff, it)
                                 } ?: run {
                                     scope.launch {
-                                        snackbarShowed = true
-                                        noQueueSnackbarShower.showSnackbar(message = context.getString(
+                                        snackbarHostState.showSnackbarImmediately(message = context.getString(
                                             R.string.must_select_a_device)
                                         )
-                                        snackbarShowed = false
                                     }
                                 }
                             },
                             onRationaleShow = {
                                 scope.launch {
-                                    snackbarShowed = true
-                                    noQueueSnackbarShower.showSnackbar(context.getString(R.string.camera_permissions_rationale))
-                                    snackbarShowed = false
+                                    snackbarHostState.showSnackbarImmediately(context.getString(R.string.camera_permissions_rationale))
                                 }
                             },
                             onPermanentlyDenied = {
                                 scope.launch {
-                                    snackbarShowed = true
-                                    val result = noQueueSnackbarShower.showSnackbar(
+                                    val result = snackbarHostState.showSnackbarImmediately(
                                         message = context.getString(R.string.permanently_denied_permission_message),
                                         actionLabel = context.getString(R.string.ok),
                                         duration = SnackbarDuration.Short
                                     )
                                     if (result == SnackbarResult.ActionPerformed) context.openAppSettings()
-                                    snackbarShowed = false
                                 }
                             }
                         ) {
@@ -268,35 +268,20 @@ fun ConfigurationScreen(
     }
 }
 
-class NoQueueSnackbarShower(
-    private val scope: CoroutineScope,
-    private val snackbarHostState: SnackbarHostState,
-) {
-    private var deferredSnackbarResult: Deferred<SnackbarResult>? = null
-
-    suspend fun showSnackbar(
-        message: String,
-        actionLabel: String? = null,
-        withDismissAction: Boolean = false,
-        duration: SnackbarDuration =
-            if (actionLabel == null) SnackbarDuration.Short else SnackbarDuration.Indefinite,
-    ): SnackbarResult {
-        cancelImmediately()
-        deferredSnackbarResult = scope.async {
-            snackbarHostState.showSnackbar(
-                message = message,
-                actionLabel = actionLabel,
-                withDismissAction = withDismissAction,
-                duration = duration,
-            )
-        }
-        return deferredSnackbarResult?.await() ?: throw IllegalStateException()
-    }
-
-    fun cancelImmediately() {
-        deferredSnackbarResult?.cancel()
-        deferredSnackbarResult = null
-    }
+suspend fun SnackbarHostState.showSnackbarImmediately(
+    message: String,
+    actionLabel: String? = null,
+    withDismissAction: Boolean = false,
+    duration: SnackbarDuration =
+        if (actionLabel == null) SnackbarDuration.Short else SnackbarDuration.Indefinite,
+): SnackbarResult {
+    currentSnackbarData?.dismiss()
+    return showSnackbar(
+        message = message,
+        actionLabel = actionLabel,
+        withDismissAction = withDismissAction,
+        duration = duration,
+    )
 }
 
 fun Context.openAppSettings() {
@@ -316,8 +301,8 @@ fun PermissionsRequestButton(
 ) {
     val permissionsRequest = rememberPermissionsRequestLauncher(
         onGranted = onGranted,
-        onRationaleShow = onRationaleShow,
-        onPermanentlyDenied = onPermanentlyDenied
+        onRationaleShow = { onRationaleShow() },
+        onPermanentlyDenied = { onPermanentlyDenied() }
     )
     Button(
         modifier = modifier,
@@ -329,9 +314,9 @@ fun PermissionsRequestButton(
 @Composable
 fun rememberPermissionsRequestLauncher(
     onGranted: () -> Unit,
-    onRationaleShow: () -> Unit = { },
-    onPermanentlyDenied: () -> Unit = { },
-): ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>> {
+    onRationaleShow: (permissions: List<String>) -> Unit = { },
+    onPermanentlyDenied: (permissions: List<String>) -> Unit = { },
+): ManagedActivityResultLauncher<Array<String>, *> {
     val activity = LocalContext.current.findActivity()
     val permissionsStatusDetermined = remember {
         activity.getSharedPreferences("permissions_status_determined", Context.MODE_PRIVATE)
@@ -344,7 +329,6 @@ fun rememberPermissionsRequestLauncher(
     operator fun SharedPreferences.get(keys: List<String>, default: Boolean = false) =
         keys.isNotEmpty() && keys.all { getBoolean(it, default) }
 
-    var shownRationale by remember { mutableStateOf(false) }
     return rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
     ) { permissionsResult ->
@@ -356,18 +340,18 @@ fun rememberPermissionsRequestLauncher(
             permissions.any {
                 ActivityCompat.shouldShowRequestPermissionRationale(activity, it)
             } -> {
-                onRationaleShow()
-                shownRationale = true
+                permissionsStatusDetermined[permissions] = true
+                onRationaleShow(permissions.filter { ActivityCompat.shouldShowRequestPermissionRationale(activity, it) })
             }
 
-            (shownRationale || permissionsStatusDetermined[permissions]) && permissionsStatus.any {
+            permissionsStatusDetermined[permissions] && permissionsStatus.any {
                 !it.isGranted
             } -> {
                 permissionsStatusDetermined[permissions] = true
-                onPermanentlyDenied()
+                onPermanentlyDenied(result.filterValues { !it.isGranted }.map { it.key })
             }
 
-            // When requests are repeatedly sent the result list maybe sent empty
+            // When requests are repeatedly sent the result maybe be empty
             permissionsStatus.isNotEmpty() && permissionsStatus.all(PermissionStatus::isGranted) -> {
                 permissionsStatusDetermined[permissions] = true
                 onGranted()
