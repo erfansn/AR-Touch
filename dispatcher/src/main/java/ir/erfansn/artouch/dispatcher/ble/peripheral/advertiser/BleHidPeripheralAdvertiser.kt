@@ -6,7 +6,7 @@ import androidx.lifecycle.LifecycleOwner
 interface BleHidPeripheralAdvertiser : DefaultLifecycleObserver {
     fun startAdvertising()
     fun stopAdvertising()
-
+    fun close()
     override fun onStart(owner: LifecycleOwner) = startAdvertising()
     override fun onStop(owner: LifecycleOwner) = stopAdvertising()
 }

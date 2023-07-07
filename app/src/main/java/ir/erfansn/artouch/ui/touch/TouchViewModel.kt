@@ -1,53 +1,46 @@
 package ir.erfansn.artouch.ui.touch
 
-import android.app.Application
-import android.bluetooth.BluetoothDevice
 import android.graphics.PointF
 import androidx.camera.core.ImageProxy
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
-import ir.erfansn.artouch.dispatcher.ble.peripheral.device.DefaultArTouchPeripheralDevice
+import androidx.lifecycle.ViewModel
+import ir.erfansn.artouch.dispatcher.ble.peripheral.device.ArTouchPeripheralDevice
 import ir.erfansn.artouch.producer.DefaultTouchEventProducer
-import ir.erfansn.artouch.producer.detector.hand.MediaPipeHandDetector
-import ir.erfansn.artouch.producer.detector.marker.ArUcoMarkerDetector
+import ir.erfansn.artouch.producer.detector.ObjectDetector
+import ir.erfansn.artouch.producer.detector.hand.HandDetectionResult
+import ir.erfansn.artouch.producer.detector.marker.MarkersDetectionResult
 import ir.erfansn.artouch.ui.touch.TouchFragment.Companion.CENTRAL_DEVICE_KEY
-import ir.erfansn.artouch.ui.touch.TouchFragment.Companion.DEBUG_MODE_KEY
-import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 class TouchViewModel(
-    application: Application,
     savedStateHandle: SavedStateHandle,
-) : AndroidViewModel(application) {
+    private val arTouchPeripheralDevice: ArTouchPeripheralDevice,
+    private val handDetector: ObjectDetector<HandDetectionResult>,
+    private val markerDetector: ObjectDetector<MarkersDetectionResult>,
+) : ViewModel(), KoinComponent {
 
-    private val centralDevice: BluetoothDevice = checkNotNull(savedStateHandle[CENTRAL_DEVICE_KEY])
-    val debugMode: Boolean = checkNotNull(savedStateHandle[DEBUG_MODE_KEY])
+    init {
+        arTouchPeripheralDevice.centralDevice = checkNotNull(savedStateHandle[CENTRAL_DEVICE_KEY])
+    }
 
-    private val arTouchPeripheralDevice = DefaultArTouchPeripheralDevice(
-        context = application,
-        centralDevice = centralDevice,
-        scope = viewModelScope,
-    )
     val connectionState = arTouchPeripheralDevice.connectionState
 
-    private val handDetector = MediaPipeHandDetector(
-        context = application,
-        coroutineScope = viewModelScope,
-    )
     val handDetectionResult = handDetector.result
 
-    private val markerDetector = ArUcoMarkerDetector()
     val markerDetectionResult = markerDetector.result
 
     private val touchEventProducer = DefaultTouchEventProducer(
-        handDetector = handDetector,
-        markerDetector = markerDetector,
+        handDetectionResult = handDetectionResult,
+        markersDetectionResult = markerDetectionResult,
+        touchPositionExtractor = get(),
+        defaultDispatcher = get()
     )
     val touchEvent = touchEventProducer.touchEvent
 
-    fun makeLifecycleAware(addObserver: (LifecycleObserver) -> Unit) {
-        addObserver(arTouchPeripheralDevice)
+    fun startConnectingToDevice(lifecycle: Lifecycle) {
+        lifecycle.addObserver(arTouchPeripheralDevice)
     }
 
     fun reconnectSelectedDevice() {
@@ -64,8 +57,11 @@ class TouchViewModel(
     }
 
     fun dispatchTouch(tapped: Boolean, point: PointF) {
-        viewModelScope.launch {
-            arTouchPeripheralDevice.dispatchTouch(tapped, point)
-        }
+        arTouchPeripheralDevice.dispatchTouch(tapped, point)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        arTouchPeripheralDevice.close()
     }
 }

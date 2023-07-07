@@ -31,7 +31,6 @@ import androidx.core.view.marginRight
 import androidx.core.view.marginTop
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -47,6 +46,7 @@ import ir.erfansn.artouch.ui.configuration.ConfigurationFragment.Companion.allPe
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.concurrent.Executors
 
 class TouchFragment : Fragment() {
@@ -54,7 +54,8 @@ class TouchFragment : Fragment() {
     private var _binding: FragmentTouchBinding? = null
     private val binding get() = _binding!!
     private val backgroundExecutor = Executors.newFixedThreadPool(2)
-    private val viewModel by viewModels<TouchViewModel>()
+
+    private val viewModel by viewModel<TouchViewModel>()
 
     private var preview: Preview? = null
     private var handAnalysis: ImageAnalysis? = null
@@ -81,7 +82,9 @@ class TouchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.makeLifecycleAware(viewLifecycleOwner.lifecycle::addObserver)
+        val shouldShowDebug = requireArguments().getBoolean(DEBUG_MODE_KEY)
+
+        viewModel.startConnectingToDevice(viewLifecycleOwner.lifecycle)
 
         binding.reconnect.setOnClickListener {
             viewModel.reconnectSelectedDevice()
@@ -92,7 +95,7 @@ class TouchFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                if (viewModel.debugMode) {
+                if (shouldShowDebug) {
                     launch {
                         viewModel.handDetectionResult
                             .collect {
@@ -111,7 +114,7 @@ class TouchFragment : Fragment() {
 
                 launch {
                     viewModel.connectionState
-                        .onEachIf(viewModel.debugMode) {
+                        .onEachIf(shouldShowDebug) {
                             Log.d(TAG, "ArTouchConnectionState changed to $it")
                         }
                         .collect {
@@ -152,7 +155,7 @@ class TouchFragment : Fragment() {
                 }
                 launch {
                     viewModel.touchEvent
-                        .onEachIf(viewModel.debugMode) { (pressed, position) ->
+                        .onEachIf(shouldShowDebug) { (pressed, position) ->
                             binding.touchEvent.text = getString(
                                 R.string.touch_event,
                                 position.x,

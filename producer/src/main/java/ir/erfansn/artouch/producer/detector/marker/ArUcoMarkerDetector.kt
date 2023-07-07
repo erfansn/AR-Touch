@@ -28,21 +28,19 @@ class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
         val adjustedImageSize: Size
         val markersPosition: Array<PointF>
         val inferenceTime = measureTime {
-            val rotatedBuffer = rotateYuvImage(
+            val (outputWidth, outputHeight, rotatedImageBuffer) = rotateYImage(
                 width = imageProxy.width,
                 height = imageProxy.height,
                 rotationDegrees = imageProxy.imageInfo.rotationDegrees,
                 inputBuffer = imageProxy.planes[0].buffer,
             )
 
-            rotatedBuffer.also { (outputWidth, outputHeight, rotatedImageBuffer) ->
-                adjustedImageSize = Size(outputWidth, outputHeight)
-                markersPosition = detectArUco(
-                    width = outputWidth,
-                    height = outputHeight,
-                    frameBuffer = rotatedImageBuffer,
-                )
-            }
+            adjustedImageSize = Size(outputWidth, outputHeight)
+            markersPosition = detectArUco(
+                width = outputWidth,
+                height = outputHeight,
+                frameBuffer = rotatedImageBuffer,
+            )
         }
 
         MarkersDetectionResult(
@@ -60,7 +58,7 @@ class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
         imageProxy.close()
     }
 
-    private fun rotateYuvImage(
+    private fun rotateYImage(
         width: Int,
         height: Int,
         rotationDegrees: Int,
@@ -73,7 +71,7 @@ class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
         }
         val rotatedImageBuffer = ByteBuffer.allocateDirect(outputWidth * outputHeight)
 
-        rotateYuvImage(
+        rotateYImage(
             width = width,
             height = height,
             rotationDegrees = rotationDegrees,
@@ -83,7 +81,7 @@ class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
         return Triple(outputWidth, outputHeight, rotatedImageBuffer)
     }
 
-    private external fun rotateYuvImage(
+    private external fun rotateYImage(
         width: Int,
         height: Int,
         rotationDegrees: Int,

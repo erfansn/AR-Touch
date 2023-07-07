@@ -2,6 +2,7 @@ package ir.erfansn.artouch.dispatcher.ble.peripheral.advertiser
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothHidDeviceAppSdpSettings
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.AdvertiseCallback
 import android.bluetooth.le.AdvertiseData
@@ -11,20 +12,19 @@ import android.content.Context
 import android.util.Log
 import androidx.core.content.getSystemService
 import ir.erfansn.artouch.dispatcher.ble.ArTouchSpecification
-import ir.erfansn.artouch.dispatcher.ble.peripheral.ArTouchPeripheralManager
+import ir.erfansn.artouch.dispatcher.ble.peripheral.DefaultBleHidPeripheralManager
+import ir.erfansn.artouch.dispatcher.ble.peripheral.BleHidPeripheralRegistrar
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 @SuppressLint("MissingPermission")
-class ArTouchPeripheralAdvertiser(
-    context: Context,
-    private val scope: CoroutineScope,
-) : BleHidPeripheralAdvertiser {
+class ArTouchPeripheralAdvertiser(context: Context) : BleHidPeripheralAdvertiser {
 
-    private val arTouchPeripheralManager = ArTouchPeripheralManager(
-        context = context,
-        scope = scope,
-    )
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+    private val bleHidPeripheralManager: BleHidPeripheralRegistrar = DefaultBleHidPeripheralManager(context)
 
     private val bluetoothManager = context.getSystemService<BluetoothManager>()!!
     private val bluetoothAdapter: BluetoothAdapter = bluetoothManager.adapter
@@ -43,9 +43,17 @@ class ArTouchPeripheralAdvertiser(
     }
 
     override fun startAdvertising() {
-        scope.launch {
+        coroutineScope.launch {
             bluetoothAdapter.name = ArTouchSpecification.NAME
-            arTouchPeripheralManager.registerDevice()
+            bleHidPeripheralManager.registerDevice(
+                sdpSettings = BluetoothHidDeviceAppSdpSettings(
+                    ArTouchSpecification.NAME,
+                    ArTouchSpecification.DESCRIPTION,
+                    ArTouchSpecification.PROVIDER,
+                    ArTouchSpecification.SUBCLASS,
+                    ArTouchSpecification.REPORT_DESCRIPTOR
+                )
+            )
             bleAdvertiser.startAdvertising(
                 AdvertiseSettings.Builder()
                     .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
@@ -64,8 +72,11 @@ class ArTouchPeripheralAdvertiser(
 
     override fun stopAdvertising() {
         bleAdvertiser.stopAdvertising(advertiseCallback)
-        arTouchPeripheralManager.unregisterDevice()
-        Log.i(TAG, "Advertising stopped")
+        bleHidPeripheralManager.unregisterDevice()
+    }
+
+    override fun close() {
+        coroutineScope.cancel()
     }
 
     companion object {

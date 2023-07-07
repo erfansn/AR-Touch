@@ -34,8 +34,8 @@
         android:id="@+id/connection_state"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:background="?attr/colorSurface">
+        android:background="?attr/colorSurface"
+        tools:visibility="gone">
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/connecting_indicator"

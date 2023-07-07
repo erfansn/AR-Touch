@@ -69,6 +69,7 @@ fun ConfigurationScreen(
     uiState: ConfigurationUiState,
     onNavigateToCameraFragment: (Boolean, BluetoothDevice) -> Unit = { _, _ -> },
     onStartArTouchAdvertiser: () -> Unit = { },
+    onStopArTouchAdvertiser: () -> Unit = { },
     onPromptToEnableBluetooth: () -> Unit = { },
     bluetoothBondedDevices: List<BluetoothDevice> = emptyList(),
 ) {
@@ -76,8 +77,13 @@ fun ConfigurationScreen(
     val paddingFromBottom by animateDpAsState(snackbarHeight)
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(uiState) {
+        when (uiState) {
+            ConfigurationUiState.AdvertisingMode -> onStartArTouchAdvertiser()
+            else -> onStopArTouchAdvertiser()
+        }
         snackbarHostState.currentSnackbarData?.dismiss()
     }
+
     Scaffold(
         snackbarHost = {
             val density = LocalDensity.current
@@ -99,7 +105,7 @@ fun ConfigurationScreen(
             val scope = rememberCoroutineScope()
             val context = LocalContext.current
             when (uiState) {
-                ConfigurationUiState.DisableBluetooth -> {
+                ConfigurationUiState.BluetoothDisable -> {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         PermissionsRequestButton(
                             permissions = listOf(*BLUETOOTH_PERMISSIONS),
@@ -129,7 +135,7 @@ fun ConfigurationScreen(
                     }
                 }
 
-                ConfigurationUiState.EnableBluetooth -> {
+                ConfigurationUiState.BluetoothEnable -> {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         PermissionsRequestButton(
                             permissions = listOf(*BLUETOOTH_PERMISSIONS),

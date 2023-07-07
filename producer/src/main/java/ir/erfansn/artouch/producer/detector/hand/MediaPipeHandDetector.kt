@@ -14,19 +14,15 @@ import com.google.mediapipe.tasks.core.Delegate
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker
 import ir.erfansn.artouch.producer.detector.ObjectDetector
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.shareIn
 
 class MediaPipeHandDetector(
     context: Context,
-    defaultDispatcher: CoroutineDispatcher = Dispatchers.Default,
-    coroutineScope: CoroutineScope,
+    externalScope: CoroutineScope,
 ) : ObjectDetector<HandDetectionResult> {
 
     private var handLandmarker: HandLandmarker? = null
@@ -68,8 +64,8 @@ class MediaPipeHandDetector(
             handLandmarker = null
             Log.i(TAG, "HandLandmerker closed")
         }
-    }.flowOn(defaultDispatcher).shareIn(
-        scope = coroutineScope,
+    }.shareIn(
+        scope = externalScope,
         started = SharingStarted.WhileSubscribed(5_000)
     )
 
@@ -79,12 +75,7 @@ class MediaPipeHandDetector(
         val frameTime = SystemClock.uptimeMillis()
 
         // Copy out RGB bits from the frame to a bitmap buffer
-        val bitmapBuffer = Bitmap.createBitmap(
-            imageProxy.width,
-            imageProxy.height,
-            Bitmap.Config.ARGB_8888,
-        )
-        imageProxy.use { bitmapBuffer.copyPixelsFromBuffer(imageProxy.planes[0].buffer) }
+        val bitmapBuffer = imageProxy.toBitmap()
         imageProxy.close()
 
         val matrix = Matrix().apply {

@@ -10,10 +10,10 @@ import androidx.core.graphics.plus
 import androidx.core.graphics.times
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmark
-import ir.erfansn.artouch.producer.detector.ObjectDetector
 import ir.erfansn.artouch.producer.detector.hand.HandDetectionResult
 import ir.erfansn.artouch.producer.detector.marker.MarkersDetectionResult
-import kotlinx.coroutines.Dispatchers
+import ir.erfansn.artouch.producer.extractor.TouchPositionExtractor
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -21,24 +21,21 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.retryWhen
-import java.lang.Math.toDegrees
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.hypot
 
 class DefaultTouchEventProducer(
-    handDetector: ObjectDetector<HandDetectionResult>,
-    markerDetector: ObjectDetector<MarkersDetectionResult>,
+    handDetectionResult: Flow<HandDetectionResult>,
+    markersDetectionResult: Flow<MarkersDetectionResult>,
+    touchPositionExtractor: TouchPositionExtractor,
+    defaultDispatcher: CoroutineDispatcher,
 ) : TouchEventProducer {
-
-    init {
-        System.loadLibrary("touch_position_extractor")
-    }
 
     private var previousTouchPosition = PointF(0f, 0f)
 
-    override val touchEvent = handDetector.result
-        .combine(markerDetector.result) { hand, markers ->
+    override val touchEvent = handDetectionResult
+        .combine(markersDetectionResult) { hand, markers ->
             require(isSameAspectRatio(hand.inputImageSize, markers.inputImageSize))
             require(hand.landmarks.isNotEmpty())
             require(markers.positions.isNotEmpty())
@@ -51,7 +48,7 @@ class DefaultTouchEventProducer(
 
                 val indexFingerTip = it[HandLandmark.INDEX_FINGER_TIP]
                 val middleFingerTip = it[HandLandmark.MIDDLE_FINGER_TIP]
-                val touchFingersAngle = toDegrees(
+                val touchFingersAngle = Math.toDegrees(
                     abs(
                         atan2(
                             y = indexFingerTip.y() - touchFingerMcpY,
@@ -74,7 +71,7 @@ class DefaultTouchEventProducer(
 
                 TouchEvent(
                     pressed = touchFingersAngle <= MIN_TOUCHING_ANGLE || touchFingersLength <= MIN_TOUCHING_LENGTH,
-                    position = extractTouchPosition(
+                    position = touchPositionExtractor.extract(
                         target = touchFingersCenterPoint,
                         boundary = markers.positions,
                     )
@@ -91,7 +88,7 @@ class DefaultTouchEventProducer(
         }.onEach {
             previousTouchPosition = it.position
         }
-        .flowOn(Dispatchers.Default)
+        .flowOn(defaultDispatcher)
         .distinctUntilChanged()
 
     private fun isSameAspectRatio(first: Size, second: Size): Boolean {
@@ -101,11 +98,6 @@ class DefaultTouchEventProducer(
     private fun calculateCenter(first: NormalizedLandmark, second: NormalizedLandmark): PointF {
         return PointF(abs(first.x() + second.x()) / 2f, abs(first.y() + second.y()) / 2f)
     }
-
-    private external fun extractTouchPosition(
-        target: PointF,
-        boundary: Array<PointF>,
-    ): PointF
 
     companion object {
         private const val TAG = "DefaultTouchEventProducer"

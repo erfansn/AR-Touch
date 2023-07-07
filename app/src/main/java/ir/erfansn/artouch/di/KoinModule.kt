@@ -22,12 +22,14 @@ import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.named
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val appModule = module {
-    single { CoroutineScope(Dispatchers.Default) }
+    single { Dispatchers.Default }
+    singleOf(::CoroutineScope)
 
     factoryOf(::DefaultBluetoothHelper) bind BluetoothHelper::class
     factoryOf(::ArTouchPeripheralAdvertiser) bind BleHidPeripheralAdvertiser::class

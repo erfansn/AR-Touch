@@ -1,7 +1,7 @@
 package ir.erfansn.artouch.dispatcher.ble.peripheral.device
 
-import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothHidDeviceAppSdpSettings
 import android.content.Context
 import android.graphics.PointF
 import android.util.Log
@@ -10,68 +10,78 @@ import androidx.core.graphics.component2
 import androidx.core.graphics.times
 import androidx.core.graphics.toPoint
 import ir.erfansn.artouch.dispatcher.ble.ArTouchSpecification
-import ir.erfansn.artouch.dispatcher.ble.peripheral.ArTouchPeripheralManager
-import kotlinx.coroutines.CoroutineDispatcher
+import ir.erfansn.artouch.dispatcher.ble.peripheral.DefaultBleHidPeripheralManager
+import ir.erfansn.artouch.dispatcher.ble.peripheral.BleHidConnectionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-@SuppressLint("MissingPermission")
-class DefaultArTouchPeripheralDevice(
-    context: Context,
-    private val centralDevice: BluetoothDevice,
-    private val scope: CoroutineScope,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : ArTouchPeripheralDevice {
+class DefaultArTouchPeripheralDevice(context: Context) : ArTouchPeripheralDevice {
 
-    private val arTouchPeripheralManager = ArTouchPeripheralManager(
-        context = context,
-        scope = scope,
-    )
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+    private val bleHidPeripheralManager = DefaultBleHidPeripheralManager(context)
+    override val connectionState = bleHidPeripheralManager.connectionState
+
+    override lateinit var centralDevice: BluetoothDevice
+
+    override fun connect() {
+        check(::centralDevice.isInitialized) { "Must set a central device" }
+
+        coroutineScope.launch {
+            bleHidPeripheralManager.registerDevice(
+                sdpSettings = BluetoothHidDeviceAppSdpSettings(
+                    ArTouchSpecification.NAME,
+                    ArTouchSpecification.DESCRIPTION,
+                    ArTouchSpecification.PROVIDER,
+                    ArTouchSpecification.SUBCLASS,
+                    ArTouchSpecification.REPORT_DESCRIPTOR
+                )
+            )
+            bleHidPeripheralManager.connect(centralDevice)
+        }
+    }
+
+    override fun disconnect() {
+        if (!::centralDevice.isInitialized) return
+
+        bleHidPeripheralManager.disconnect(centralDevice)
+        bleHidPeripheralManager.unregisterDevice()
+    }
 
     @OptIn(ExperimentalUnsignedTypes::class)
-    override suspend fun dispatchTouch(tapped: Boolean, point: PointF) {
-        withContext(ioDispatcher) {
-            require(point.x in 0f..1f && point.y in 0f..1f)
-            val (x, y) = (point * 100_00f).toPoint()
-            val (lx, mx) = x.latestAndMostSignificantByte()
-            val (ly, my) = y.latestAndMostSignificantByte()
+    override fun dispatchTouch(tapped: Boolean, point: PointF) {
+        check(connectionState.value == BleHidConnectionState.Connected)
+        require(point.x in 0f..1f && point.y in 0f..1f)
 
-            arTouchPeripheralManager.trySendReport(
-                target = centralDevice,
-                id = ArTouchSpecification.REPORT_ID,
-                data = ubyteArrayOf(
-                    if (tapped) 0x01u else 0x00u,
-                    0x00u,
-                    if (tapped) 0x11u else 0x00u,
-                    lx,
-                    mx,
-                    ly,
-                    my,
-                )
-            ).also {
-                val reportState = if (it) "was successful" else "occurred a failure"
-                Log.i(TAG, "Sending the report $reportState")
-            }
+        val (x, y) = (point * 100_00f).toPoint()
+        val (lx, mx) = x.latestAndMostSignificantByte()
+        val (ly, my) = y.latestAndMostSignificantByte()
+
+        bleHidPeripheralManager.trySendReport(
+            target = centralDevice,
+            id = ArTouchSpecification.REPORT_ID,
+            data = ubyteArrayOf(
+                if (tapped) 0x01u else 0x00u,
+                0x00u,
+                if (tapped) 0x11u else 0x00u,
+                lx,
+                mx,
+                ly,
+                my,
+            )
+        ).also {
+            val reportState = if (it) "was successful" else "occurred a failure"
+            Log.i(TAG, "Sending the report $reportState")
         }
     }
 
     private fun Int.latestAndMostSignificantByte() =
         (this and 0xFF).toUByte() to (this shr 8 and 0xFF).toUByte()
 
-    override val connectionState = arTouchPeripheralManager.connectionState
-
-    override fun connect() {
-        scope.launch {
-            arTouchPeripheralManager.registerDevice()
-            arTouchPeripheralManager.connect(centralDevice)
-        }
-    }
-
-    override fun disconnect() {
-        arTouchPeripheralManager.disconnect(centralDevice)
-        arTouchPeripheralManager.unregisterDevice()
+    override fun close() {
+        coroutineScope.cancel()
     }
 
     companion object {

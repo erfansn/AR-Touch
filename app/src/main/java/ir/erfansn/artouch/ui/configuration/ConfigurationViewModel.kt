@@ -1,62 +1,46 @@
 package ir.erfansn.artouch.ui.configuration
 
-import android.app.Application
-import android.bluetooth.BluetoothManager
-import android.content.pm.PackageManager
-import android.os.Build
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.content.ContextCompat
-import androidx.core.content.getSystemService
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ir.erfansn.artouch.dispatcher.DefaultBluetoothBondedDevices
-import kotlinx.coroutines.isActive
+import ir.erfansn.artouch.dispatcher.BluetoothHelper
+import ir.erfansn.artouch.dispatcher.ble.peripheral.advertiser.BleHidPeripheralAdvertiser
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 
-class ConfigurationViewModel(application: Application) : AndroidViewModel(application) {
+class ConfigurationViewModel(
+    private val bluetoothHelper: BluetoothHelper,
+    private val bleHidPeripheralAdvertiser: BleHidPeripheralAdvertiser,
+) : ViewModel() {
 
-    private val bluetoothManager = application.getSystemService<BluetoothManager>()!!
-    private val bluetoothAdapter = bluetoothManager.adapter
-    private val isBluetoothEnable get() = bluetoothAdapter.isEnabled
-
-    private val bluetoothPermissionsGranted
-        get() = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            true
-        } else {
-            ConfigurationFragment.BLUETOOTH_PERMISSIONS.all {
-                ContextCompat.checkSelfPermission(
-                    getApplication(),
-                    it
-                ) == PackageManager.PERMISSION_GRANTED
-            }
-        }
-
-    private val bluetoothBondedDevices = DefaultBluetoothBondedDevices(
-        bluetoothAdapter,
-        viewModelScope,
-    )
-
-    val bondedDevices = bluetoothBondedDevices.devices
-    var uiState: ConfigurationUiState by mutableStateOf(ConfigurationUiState.DisableBluetooth)
+    val bondedDevices = bluetoothHelper.bondedDevices
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList()
+        )
+    var uiState: ConfigurationUiState by mutableStateOf(ConfigurationUiState.BluetoothDisable)
         private set
 
     init {
         viewModelScope.launch {
-            while (isActive) {
+            while (true) {
                 uiState = when {
-                    bluetoothPermissionsGranted && isBluetoothEnable -> {
+                    bluetoothHelper.allPermissionsGranted && bluetoothHelper.enabled -> {
                         ConfigurationUiState.AdvertisingMode
                     }
 
-                    !bluetoothPermissionsGranted && isBluetoothEnable -> {
-                        ConfigurationUiState.EnableBluetooth
+                    !bluetoothHelper.allPermissionsGranted && bluetoothHelper.enabled -> {
+                        ConfigurationUiState.BluetoothEnable
                     }
 
                     else -> {
-                        ConfigurationUiState.DisableBluetooth
+                        ConfigurationUiState.BluetoothDisable
                     }
                 }
                 yield()
@@ -64,21 +48,23 @@ class ConfigurationViewModel(application: Application) : AndroidViewModel(applic
         }
     }
 
-    fun handleBluetoothEnablingResult(isEnabled: Boolean) {
-        uiState = if (isEnabled) {
-            ConfigurationUiState.AdvertisingMode
-        } else {
-            ConfigurationUiState.DisableBluetooth
-        }
+    fun startArTouchAdvertiser(lifecycle: Lifecycle) {
+        lifecycle.addObserver(bleHidPeripheralAdvertiser)
     }
 
-    fun startArTouchAdvertising() {
-        uiState = ConfigurationUiState.AdvertisingMode
+    fun stopArTouchAdvertiser(lifecycle: Lifecycle) {
+        bleHidPeripheralAdvertiser.stopAdvertising()
+        lifecycle.removeObserver(bleHidPeripheralAdvertiser)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        bleHidPeripheralAdvertiser.close()
     }
 }
 
 sealed interface ConfigurationUiState {
-    object DisableBluetooth : ConfigurationUiState
-    object EnableBluetooth : ConfigurationUiState
+    object BluetoothDisable : ConfigurationUiState
+    object BluetoothEnable : ConfigurationUiState
     object AdvertisingMode : ConfigurationUiState
 }

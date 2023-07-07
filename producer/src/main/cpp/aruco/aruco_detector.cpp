@@ -69,7 +69,7 @@ Java_ir_erfansn_artouch_producer_detector_marker_ArUcoMarkerDetector_detectArUco
 }
 
 JNIEXPORT void JNICALL
-Java_ir_erfansn_artouch_producer_detector_marker_ArUcoMarkerDetector_rotateYuvImage(
+Java_ir_erfansn_artouch_producer_detector_marker_ArUcoMarkerDetector_rotateYImage(
         JNIEnv* env, jobject thiz,
         jint inputWidth,
         jint inputHeight,

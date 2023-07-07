@@ -1,7 +1,6 @@
 package ir.erfansn.artouch.ui.configuration
 
 import android.Manifest
-import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -10,26 +9,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import ir.erfansn.artouch.disableImmersiveMode
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.fragment.findNavController
 import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import ir.erfansn.artouch.R
-import ir.erfansn.artouch.dispatcher.ble.peripheral.advertiser.ArTouchPeripheralAdvertiser
+import ir.erfansn.artouch.disableImmersiveMode
 import ir.erfansn.artouch.ui.touch.TouchFragment
+import org.koin.androidx.compose.koinViewModel
 
 class ConfigurationFragment : Fragment() {
 
@@ -41,43 +34,22 @@ class ConfigurationFragment : Fragment() {
         setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
         setContent {
             Mdc3Theme {
-                val viewModel: ConfigurationViewModel = viewModel()
+                val viewModel: ConfigurationViewModel = koinViewModel()
                 val boundedDevices by viewModel.bondedDevices.collectAsState()
                 val uiState = viewModel.uiState
 
-                val arTouchPeripheralAdvertiser = remember {
-                    ArTouchPeripheralAdvertiser(
-                        context = requireContext(),
-                        scope = viewLifecycleOwner.lifecycleScope,
-                    )
-                }
-                DisposableEffect(uiState) {
-                    when (uiState) {
-                        ConfigurationUiState.AdvertisingMode -> {
-                            viewLifecycleOwner.lifecycle.addObserver(arTouchPeripheralAdvertiser)
-                        }
-
-                        ConfigurationUiState.DisableBluetooth, ConfigurationUiState.EnableBluetooth -> {
-                            arTouchPeripheralAdvertiser.stopAdvertising()
-                        }
-                    }
-                    onDispose {
-                        viewLifecycleOwner.lifecycle.removeObserver(arTouchPeripheralAdvertiser)
-                    }
-                }
-
-                val bluetoothEnablerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                    viewModel.handleBluetoothEnablingResult(
-                        isEnabled = it.resultCode == Activity.RESULT_OK
-                    )
-                }
                 ConfigurationScreen(
                     uiState = uiState,
                     bluetoothBondedDevices = boundedDevices,
                     onPromptToEnableBluetooth = {
-                        bluetoothEnablerLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+                        startActivity(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
                     },
-                    onStartArTouchAdvertiser = viewModel::startArTouchAdvertising,
+                    onStartArTouchAdvertiser = {
+                        viewModel.startArTouchAdvertiser(viewLifecycleOwner.lifecycle)
+                    },
+                    onStopArTouchAdvertiser = {
+                        viewModel.stopArTouchAdvertiser(viewLifecycleOwner.lifecycle)
+                    },
                     onNavigateToCameraFragment = { debugMode, centralDevice ->
                         findNavController().navigate(
                             resId = R.id.action_configurationFragment_to_touchFragment,
