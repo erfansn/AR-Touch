@@ -77,7 +77,11 @@ dependencies {
 
     implementation libs.google.accompanist.themeadapter.m3
 
+    implementation libs.io.insert.koin.asProvider()
+    implementation libs.io.insert.koin.compose
+
     testImplementation libs.junit4
+    testImplementation libs.io.insert.koin.test
     androidTestImplementation libs.androidx.test.ext
     androidTestImplementation libs.androidx.test.espresso.core
 }
