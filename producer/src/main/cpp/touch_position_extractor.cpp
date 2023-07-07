@@ -72,3 +72,13 @@ Java_ir_erfansn_artouch_producer_DefaultTouchEventProducer_extractTouchPosition(
     auto touchPosition = env->NewObject(pointFClass, pointFConstructor, (float) finalX, (float) finalY);
     return touchPosition;
 }
+
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_ir_erfansn_artouch_producer_extractor_DefaultTouchPositionExtractor_extractTouchPosition(
+        JNIEnv *env, jobject thiz,
+        jobject target,
+        jobjectArray boundary
+) {
+    return Java_ir_erfansn_artouch_producer_DefaultTouchEventProducer_extractTouchPosition(env, thiz, target, boundary);
+}
