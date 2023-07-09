@@ -13,6 +13,7 @@ import android.provider.Settings
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -274,7 +275,7 @@ fun ConfigurationScreen(
     }
 }
 
-suspend fun SnackbarHostState.showSnackbarImmediately(
+private suspend fun SnackbarHostState.showSnackbarImmediately(
     message: String,
     actionLabel: String? = null,
     withDismissAction: Boolean = false,
@@ -290,14 +291,14 @@ suspend fun SnackbarHostState.showSnackbarImmediately(
     )
 }
 
-fun Context.openAppSettings() {
+private fun Context.openAppSettings() {
     Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
         .setData(Uri.fromParts("package", packageName, null))
         .also(::startActivity)
 }
 
 @Composable
-fun PermissionsRequestButton(
+private fun PermissionsRequestButton(
     permissions: List<String>,
     onGranted: () -> Unit,
     modifier: Modifier = Modifier,
@@ -317,6 +318,7 @@ fun PermissionsRequestButton(
     )
 }
 
+@VisibleForTesting
 @Composable
 fun rememberPermissionsRequestLauncher(
     onGranted: () -> Unit,
@@ -377,7 +379,7 @@ private fun ConfigurationScreenPreview() {
 }
 
 @JvmInline
-value class PermissionStatus(
+private value class PermissionStatus(
     val isGranted: Boolean,
 )
 

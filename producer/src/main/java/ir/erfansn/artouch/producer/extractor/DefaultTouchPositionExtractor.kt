@@ -2,7 +2,7 @@ package ir.erfansn.artouch.producer.extractor
 
 import android.graphics.PointF
 
-class DefaultTouchPositionExtractor : TouchPositionExtractor {
+internal class DefaultTouchPositionExtractor : TouchPositionExtractor {
 
     init {
         System.loadLibrary("touch_position_extractor")

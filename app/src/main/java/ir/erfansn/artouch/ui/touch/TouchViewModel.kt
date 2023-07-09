@@ -10,16 +10,18 @@ import ir.erfansn.artouch.producer.DefaultTouchEventProducer
 import ir.erfansn.artouch.producer.detector.ObjectDetector
 import ir.erfansn.artouch.producer.detector.hand.HandDetectionResult
 import ir.erfansn.artouch.producer.detector.marker.MarkersDetectionResult
+import ir.erfansn.artouch.producer.extractor.TouchPositionExtractor
 import ir.erfansn.artouch.ui.touch.TouchFragment.Companion.CENTRAL_DEVICE_KEY
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
+import kotlinx.coroutines.CoroutineDispatcher
 
 class TouchViewModel(
     savedStateHandle: SavedStateHandle,
+    defaultDispatcher: CoroutineDispatcher,
+    touchPositionExtractor: TouchPositionExtractor,
     private val arTouchPeripheralDevice: ArTouchPeripheralDevice,
     private val handDetector: ObjectDetector<HandDetectionResult>,
     private val markerDetector: ObjectDetector<MarkersDetectionResult>,
-) : ViewModel(), KoinComponent {
+) : ViewModel() {
 
     init {
         arTouchPeripheralDevice.centralDevice = checkNotNull(savedStateHandle[CENTRAL_DEVICE_KEY])
@@ -34,8 +36,8 @@ class TouchViewModel(
     private val touchEventProducer = DefaultTouchEventProducer(
         handDetectionResult = handDetectionResult,
         markersDetectionResult = markerDetectionResult,
-        touchPositionExtractor = get(),
-        defaultDispatcher = get()
+        touchPositionExtractor = touchPositionExtractor,
+        defaultDispatcher = defaultDispatcher,
     )
     val touchEvent = touchEventProducer.touchEvent
 

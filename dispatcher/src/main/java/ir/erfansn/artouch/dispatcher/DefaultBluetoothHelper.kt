@@ -12,7 +12,7 @@ import androidx.core.content.getSystemService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 
-class DefaultBluetoothHelper(private val context: Context) : BluetoothHelper {
+internal class DefaultBluetoothHelper(private val context: Context) : BluetoothHelper {
 
     private val bluetoothManager = context.getSystemService<BluetoothManager>()!!
     private val bluetoothAdapter = bluetoothManager.adapter

@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.shareIn
 
-class MediaPipeHandDetector(
+internal class MediaPipeHandDetector(
     context: Context,
     externalScope: CoroutineScope,
 ) : ObjectDetector<HandDetectionResult> {

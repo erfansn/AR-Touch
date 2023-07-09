@@ -20,7 +20,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 @SuppressLint("MissingPermission")
-class ArTouchPeripheralAdvertiser(context: Context) : BleHidPeripheralAdvertiser {
+internal class ArTouchPeripheralAdvertiser(context: Context) : BleHidPeripheralAdvertiser {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 

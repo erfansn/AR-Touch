@@ -16,7 +16,3 @@ internal interface BleHidPeripheralManager : BleHidPeripheralRegistrar {
     fun connect(centralDevice: BluetoothDevice)
     fun disconnect(centralDevice: BluetoothDevice)
 }
-
-enum class BleHidConnectionState {
-    Connected, Disconnected, Connecting, FailedToConnect
-}

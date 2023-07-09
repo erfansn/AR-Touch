@@ -12,7 +12,7 @@ import java.nio.ByteBuffer
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
-class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
+internal class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
 
     init {
         System.loadLibrary("aruco_detector")

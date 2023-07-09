@@ -17,7 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-class DefaultArTouchPeripheralDevice(context: Context) : ArTouchPeripheralDevice {
+internal class DefaultArTouchPeripheralDevice(context: Context) : ArTouchPeripheralDevice {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
