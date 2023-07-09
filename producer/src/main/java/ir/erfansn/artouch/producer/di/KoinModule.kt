@@ -11,7 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
-import org.koin.core.qualifier.named
+import org.koin.core.module.dsl.named
 import org.koin.core.qualifier.qualifier
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -20,7 +20,7 @@ private const val HAND_DETECTOR_NAME = "hand_detector"
 private const val MARKER_DETECTOR_NAME = "marker_detector"
 
 val HAND_DETECTOR_QUALIFIER = qualifier(HAND_DETECTOR_NAME)
-val MARKER_DETECTOR_QUALIFIER = qualifier(HAND_DETECTOR_NAME)
+val MARKER_DETECTOR_QUALIFIER = qualifier(MARKER_DETECTOR_NAME)
 
 val producerModule = module {
     single { CoroutineScope(Dispatchers.Default) }
