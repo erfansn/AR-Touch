@@ -20,17 +20,13 @@ class HandLandmarksView(context: Context, attrs: AttributeSet) : View(context, a
     private var imageHeight: Int = 1
 
     init {
-        initPaints()
-    }
-
-    private fun initPaints() {
-        linePaint.color = Color.LTGRAY
-        linePaint.strokeWidth = LANDMARK_STROKE_WIDTH
-        linePaint.style = Paint.Style.STROKE
-
         pointPaint.color = Color.YELLOW
-        pointPaint.strokeWidth = LANDMARK_STROKE_WIDTH
+        pointPaint.strokeWidth = 24f
         pointPaint.style = Paint.Style.FILL
+
+        linePaint.color = Color.LTGRAY
+        linePaint.strokeWidth = 12f
+        linePaint.style = Paint.Style.STROKE
     }
 
     override fun draw(canvas: Canvas) {
@@ -83,8 +79,4 @@ class HandLandmarksView(context: Context, attrs: AttributeSet) : View(context, a
 
             invalidate()
         }
-
-    companion object {
-        private const val LANDMARK_STROKE_WIDTH = 8F
-    }
 }

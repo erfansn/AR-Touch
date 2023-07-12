@@ -21,12 +21,12 @@ class MarkersPositionView(context: Context?, attrs: AttributeSet?) : View(contex
 
     init {
         pointPaint.color = Color.RED
-        pointPaint.strokeWidth = 12f
+        pointPaint.strokeWidth = 24f
         pointPaint.style = Paint.Style.FILL
 
         linePaint.color = Color.GREEN
-        linePaint.isAntiAlias = true
-        linePaint.strokeWidth = 6f
+        linePaint.strokeWidth = 12f
+        pointPaint.style = Paint.Style.FILL
     }
 
     override fun onDraw(canvas: Canvas) {
