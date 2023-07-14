@@ -24,3 +24,4 @@ rootProject.name = "AR Touch"
 include ':app'
 include ':producer'
 include ':dispatcher'
+include ':common'
