@@ -51,14 +51,12 @@ dependencies {
 
     implementation libs.androidx.core
     implementation libs.androidx.camera.core
-
     implementation libs.google.mediapipe.tasks.vision
-
-    implementation libs.kotlinx.coroutines
-
+    implementation libs.kotlinx.coroutines.asProvider()
     implementation libs.io.insert.koin.asProvider()
 
     testImplementation libs.junit4
+    testImplementation libs.kotlinx.coroutines.test
     androidTestImplementation libs.androidx.test.ext
     androidTestImplementation libs.androidx.test.espresso.core
 }

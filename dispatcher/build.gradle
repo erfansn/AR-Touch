@@ -33,8 +33,7 @@ dependencies {
     implementation project(':common')
 
     implementation libs.androidx.core
-
-    implementation libs.kotlinx.coroutines
+    implementation libs.kotlinx.coroutines.asProvider()
     implementation libs.androidx.lifecycle.runtime
     implementation libs.io.insert.koin.asProvider()
 
