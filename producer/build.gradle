@@ -44,6 +44,10 @@ android {
             version '3.22.1'
         }
     }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -54,6 +58,8 @@ dependencies {
     implementation libs.google.mediapipe.tasks.vision
     implementation libs.kotlinx.coroutines.asProvider()
     implementation libs.io.insert.koin.asProvider()
+    // Temporarily added to run unit tests without problem
+    implementation 'androidx.emoji2:emoji2-views-helper:1.3.0'
 
     testImplementation libs.junit4
     testImplementation libs.kotlinx.coroutines.test

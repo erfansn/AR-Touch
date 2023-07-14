@@ -63,9 +63,10 @@ class DefaultTouchEventProducer(
                 Log.d(TAG, "Angle between Touch fingers is $touchFingersAngle")
                 Log.d(TAG, "Length between Touch fingers is $touchFingersLength")
                 Log.d(TAG, "Center point between Touch fingers is $touchFingersCenterPoint")
+                Log.d(TAG, "Z coordination of wrist is ${it[HandLandmark.WRIST].z()}")
 
                 TouchEvent(
-                    pressed = touchFingersAngle <= MIN_TOUCHING_ANGLE || touchFingersLength <= MIN_TOUCHING_LENGTH,
+                    pressed = (it[HandLandmark.WRIST].z() > MAX_HAND_DEPTH && touchFingersLength <= MAX_FINGERS_LENGTH) || touchFingersAngle <= MAX_FINGERS_ANGLE,
                     position = touchPositionExtractor.extract(
                         target = touchFingersCenterPoint,
                         boundary = markers.positions,
@@ -101,8 +102,9 @@ class DefaultTouchEventProducer(
         private const val TAG = "DefaultTouchEventProducer"
 
         private const val TOLERANCE = 0.35f
-        private const val MIN_TOUCHING_ANGLE = 12f
-        private const val MIN_TOUCHING_LENGTH = 0.0385f
+        private const val MAX_FINGERS_ANGLE = 12f
+        private const val MAX_FINGERS_LENGTH = 0.0385f
+        private const val MAX_HAND_DEPTH = 1.5739107E-7f
     }
 }
 
