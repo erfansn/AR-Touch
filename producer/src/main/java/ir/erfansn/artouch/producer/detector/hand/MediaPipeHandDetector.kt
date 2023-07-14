@@ -49,7 +49,7 @@ internal class MediaPipeHandDetector(
                         HandDetectionResult(
                             inferenceTime = inferenceTime,
                             inputImageSize = Size(input.width, input.height),
-                            landmarks = result.landmarks(),
+                            landmarks = result.landmarks().firstOrNull() ?: emptyList(),
                         )
                     )
                 }

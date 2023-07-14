@@ -35,7 +35,7 @@ class DefaultTouchEventProducer(
             require(hand.landmarks.isNotEmpty())
             require(markers.positions.isNotEmpty())
 
-            hand.landmarks.first().let {
+            hand.landmarks.let {
                 val (touchFingerMcpX, touchFingerMcpY) = calculateCenter(
                     it[HandLandmark.INDEX_FINGER_MCP],
                     it[HandLandmark.MIDDLE_FINGER_MCP]

@@ -32,26 +32,26 @@ class HandLandmarksView(context: Context, attrs: AttributeSet) : View(context, a
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
         result?.let { result ->
-            for (landmarks in result.landmarks) {
-                for (connection in HandLandmarker.HAND_CONNECTIONS) {
-                    val startPreviewOptimizedLandmark = landmarks[connection.start()].previewOptimized
-                    val endPreviewOptimizedLandmark = landmarks[connection.end()].previewOptimized
-                    canvas.drawLine(
-                        startPreviewOptimizedLandmark.x(),
-                        startPreviewOptimizedLandmark.y(),
-                        endPreviewOptimizedLandmark.x(),
-                        endPreviewOptimizedLandmark.y(),
-                        linePaint
-                    )
-                }
-                for (normalizedLandmark in landmarks) {
-                    val previewOptimizedLandmark = normalizedLandmark.previewOptimized
-                    canvas.drawPoint(
-                        previewOptimizedLandmark.x(),
-                        previewOptimizedLandmark.y(),
-                        pointPaint
-                    )
-                }
+            for (connection in HandLandmarker.HAND_CONNECTIONS) {
+                if (result.landmarks.isEmpty()) break
+
+                val startPreviewOptimizedLandmark = result.landmarks[connection.start()].previewOptimized
+                val endPreviewOptimizedLandmark = result.landmarks[connection.end()].previewOptimized
+                canvas.drawLine(
+                    startPreviewOptimizedLandmark.x(),
+                    startPreviewOptimizedLandmark.y(),
+                    endPreviewOptimizedLandmark.x(),
+                    endPreviewOptimizedLandmark.y(),
+                    linePaint
+                )
+            }
+            for (normalizedLandmark in result.landmarks) {
+                val previewOptimizedLandmark = normalizedLandmark.previewOptimized
+                canvas.drawPoint(
+                    previewOptimizedLandmark.x(),
+                    previewOptimizedLandmark.y(),
+                    pointPaint
+                )
             }
         }
     }
