@@ -14,9 +14,9 @@ Java_ir_erfansn_artouch_producer_extractor_DefaultTouchPositionExtractor_extract
         jobject target,
         jobjectArray boundary
 ) {
-    auto pointFClass = env->FindClass("android/graphics/PointF");
-    auto xFieldId = env->GetFieldID(pointFClass, "x", "F");
-    auto yFieldId = env->GetFieldID(pointFClass, "y", "F");
+    auto pointClass = env->FindClass("ir/erfansn/artouch/common/util/Point");
+    auto xFieldId = env->GetFieldID(pointClass, "x", "F");
+    auto yFieldId = env->GetFieldID(pointClass, "y", "F");
 
     const auto POINT_COUNT = 4;
     Point2f srcPoints[POINT_COUNT];
@@ -68,7 +68,7 @@ Java_ir_erfansn_artouch_producer_extractor_DefaultTouchPositionExtractor_extract
     }
     LogD("Final touch point is (%lf, %lf)", finalX, finalY);
 
-    auto pointFConstructor = env->GetMethodID(pointFClass, "<init>", "(FF)V");
-    auto touchPosition = env->NewObject(pointFClass, pointFConstructor, (float) finalX, (float) finalY);
+    auto pointFConstructor = env->GetMethodID(pointClass, "<init>", "(FF)V");
+    auto touchPosition = env->NewObject(pointClass, pointFConstructor, (float) finalX, (float) finalY);
     return touchPosition;
 }

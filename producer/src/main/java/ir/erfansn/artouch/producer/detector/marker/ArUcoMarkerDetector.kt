@@ -1,11 +1,11 @@
 package ir.erfansn.artouch.producer.detector.marker
 
 import android.graphics.ImageFormat
-import android.graphics.PointF
 import android.util.Log
-import android.util.Size
 import androidx.camera.core.ImageProxy
 import ir.erfansn.artouch.producer.detector.ObjectDetector
+import ir.erfansn.artouch.common.util.Point
+import ir.erfansn.artouch.common.util.Size
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import java.nio.ByteBuffer
@@ -26,7 +26,7 @@ internal class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
         require(imageProxy.format == ImageFormat.YUV_420_888) { "Image format must be YUV 420 888." }
 
         val adjustedImageSize: Size
-        val markersPosition: Array<PointF>
+        val markersPosition: Array<Point>
         val inferenceTime = measureTime {
             val (outputWidth, outputHeight, rotatedImageBuffer) = rotateYImage(
                 width = imageProxy.width,
@@ -46,7 +46,7 @@ internal class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
         MarkersDetectionResult(
             inferenceTime = inferenceTime.inWholeMilliseconds,
             inputImageSize = adjustedImageSize,
-            positions = if (markersPosition.any { it == PointF(-1f, -1f) }) {
+            positions = if (markersPosition.any { it == Point(-1f, -1f) }) {
                 emptyArray()
             } else {
                 markersPosition / adjustedImageSize
@@ -93,13 +93,13 @@ internal class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
         width: Int,
         height: Int,
         frameBuffer: ByteBuffer,
-    ): Array<PointF>
+    ): Array<Point>
 
     companion object {
         private const val TAG = "ArUcoMarkerDetector"
     }
 }
 
-private operator fun Array<PointF>.div(size: Size): Array<PointF> {
-    return map { PointF(it.x / size.width, it.y / size.height) }.toTypedArray()
+private operator fun Array<Point>.div(size: Size): Array<Point> {
+    return map { Point(it.x / size.width, it.y / size.height) }.toTypedArray()
 }

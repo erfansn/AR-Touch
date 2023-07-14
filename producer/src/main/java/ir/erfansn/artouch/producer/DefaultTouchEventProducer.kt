@@ -1,15 +1,10 @@
 package ir.erfansn.artouch.producer
 
-import android.graphics.PointF
 import android.util.Log
-import android.util.Size
-import androidx.core.graphics.component1
-import androidx.core.graphics.component2
-import androidx.core.graphics.minus
-import androidx.core.graphics.plus
-import androidx.core.graphics.times
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmark
+import ir.erfansn.artouch.common.util.Point
+import ir.erfansn.artouch.common.util.Size
 import ir.erfansn.artouch.producer.detector.hand.HandDetectionResult
 import ir.erfansn.artouch.producer.detector.marker.MarkersDetectionResult
 import ir.erfansn.artouch.producer.extractor.TouchPositionExtractor
@@ -32,7 +27,7 @@ class DefaultTouchEventProducer(
     defaultDispatcher: CoroutineDispatcher,
 ) : TouchEventProducer {
 
-    private var previousTouchPosition = PointF(0f, 0f)
+    private var previousTouchPosition = Point(0f, 0f)
 
     override val touchEvent = handDetectionResult
         .combine(markersDetectionResult) { hand, markers ->
@@ -92,11 +87,14 @@ class DefaultTouchEventProducer(
         .distinctUntilChanged()
 
     private fun isSameAspectRatio(first: Size, second: Size): Boolean {
-        return (first.width.toFloat() / second.width) == (first.height.toFloat() / second.height)
+        return (first.width / second.width) == (first.height / second.height)
     }
 
-    private fun calculateCenter(first: NormalizedLandmark, second: NormalizedLandmark): PointF {
-        return PointF(abs(first.x() + second.x()) / 2f, abs(first.y() + second.y()) / 2f)
+    private fun calculateCenter(first: NormalizedLandmark, second: NormalizedLandmark): Point {
+        return Point(
+            (first.x() + second.x()) / 2f,
+            (first.y() + second.y()) / 2f
+        )
     }
 
     companion object {

@@ -58,11 +58,11 @@ Java_ir_erfansn_artouch_producer_detector_marker_ArUcoMarkerDetector_detectArUco
         corners[3][1]
     );
 
-    auto pointFClass = env->FindClass("android/graphics/PointF");
-    auto points = env->NewObjectArray(MARKER_COUNT, pointFClass, nullptr);
+    auto pointClass = env->FindClass("ir/erfansn/artouch/common/util/Point");
+    auto points = env->NewObjectArray(MARKER_COUNT, pointClass, nullptr);
     for (auto i = 0; i < MARKER_COUNT; i++) {
-        auto pointFConstructor = env->GetMethodID(pointFClass, "<init>", "(FF)V");
-        auto point = env->NewObject(pointFClass, pointFConstructor, corners[i][0], corners[i][1]);
+        auto pointFConstructor = env->GetMethodID(pointClass, "<init>", "(FF)V");
+        auto point = env->NewObject(pointClass, pointFConstructor, corners[i][0], corners[i][1]);
         env->SetObjectArrayElement(points, i, point);
     }
     return points;

@@ -6,7 +6,6 @@ import android.graphics.Matrix
 import android.graphics.PixelFormat
 import android.os.SystemClock
 import android.util.Log
-import android.util.Size
 import androidx.camera.core.ImageProxy
 import com.google.mediapipe.framework.image.BitmapImageBuilder
 import com.google.mediapipe.tasks.core.BaseOptions
@@ -14,6 +13,7 @@ import com.google.mediapipe.tasks.core.Delegate
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker
 import ir.erfansn.artouch.producer.detector.ObjectDetector
+import ir.erfansn.artouch.common.util.Size
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted

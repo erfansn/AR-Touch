@@ -1,12 +1,12 @@
 package ir.erfansn.artouch.producer.detector.marker
 
-import android.graphics.PointF
-import android.util.Size
+import ir.erfansn.artouch.common.util.Point
+import ir.erfansn.artouch.common.util.Size
 
 data class MarkersDetectionResult(
-    val inferenceTime: Long = -1,
-    val inputImageSize: Size = Size(-1, -1),
-    val positions: Array<PointF> = emptyArray(),
+    val inferenceTime: Long,
+    val inputImageSize: Size,
+    val positions: Array<Point>,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -1,6 +1,5 @@
 package ir.erfansn.artouch.ui.touch
 
-import android.graphics.PointF
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SavedStateHandle
@@ -11,6 +10,7 @@ import ir.erfansn.artouch.producer.detector.ObjectDetector
 import ir.erfansn.artouch.producer.detector.hand.HandDetectionResult
 import ir.erfansn.artouch.producer.detector.marker.MarkersDetectionResult
 import ir.erfansn.artouch.producer.extractor.TouchPositionExtractor
+import ir.erfansn.artouch.common.util.Point
 import ir.erfansn.artouch.ui.touch.TouchFragment.Companion.CENTRAL_DEVICE_KEY
 import kotlinx.coroutines.CoroutineDispatcher
 
@@ -58,7 +58,7 @@ class TouchViewModel(
         markerDetector.detect(imageProxy)
     }
 
-    fun dispatchTouch(tapped: Boolean, point: PointF) {
+    fun dispatchTouch(tapped: Boolean, point: Point) {
         arTouchPeripheralDevice.dispatchTouch(tapped, point)
     }
 

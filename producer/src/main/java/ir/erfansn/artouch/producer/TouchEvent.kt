@@ -1,12 +1,12 @@
 package ir.erfansn.artouch.producer
 
-import android.graphics.PointF
+import ir.erfansn.artouch.common.util.Point
 
 data class TouchEvent(
     val pressed: Boolean,
-    val position: PointF,
+    val position: Point,
 ) {
     companion object {
-        val RELEASE = TouchEvent(false, PointF(0f, 0f))
+        val RELEASE = TouchEvent(false, Point(0f, 0f))
     }
 }

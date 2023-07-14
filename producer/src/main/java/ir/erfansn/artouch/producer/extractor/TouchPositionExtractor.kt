@@ -1,10 +1,10 @@
 package ir.erfansn.artouch.producer.extractor
 
-import android.graphics.PointF
+import ir.erfansn.artouch.common.util.Point
 
 interface TouchPositionExtractor {
     fun extract(
-        target: PointF,
-        boundary: Array<PointF>,
-    ): PointF
+        target: Point,
+        boundary: Array<Point>,
+    ): Point
 }

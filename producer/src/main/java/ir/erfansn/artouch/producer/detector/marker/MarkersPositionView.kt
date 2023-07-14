@@ -4,10 +4,10 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.PointF
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import ir.erfansn.artouch.common.util.Point
 import kotlin.math.max
 
 class MarkersPositionView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
@@ -49,11 +49,14 @@ class MarkersPositionView(context: Context?, attrs: AttributeSet?) : View(contex
         }
     }
 
-    private val PointF.previewOptimized: Pair<Float, Float>
+    private val Point.previewOptimized: Point
         get() {
             val widthSizeHalfDelta = (imageWidth * scaleFactor - width).toInt() / 2
             val heightSizeHalfDelta = (imageHeight * scaleFactor - height).toInt() / 2
-            return x * imageWidth * scaleFactor - widthSizeHalfDelta to y * imageHeight * scaleFactor - heightSizeHalfDelta
+            return Point(
+                x * imageWidth * scaleFactor - widthSizeHalfDelta,
+                y * imageHeight * scaleFactor - heightSizeHalfDelta
+            )
         }
 
     var result: MarkersDetectionResult? = null

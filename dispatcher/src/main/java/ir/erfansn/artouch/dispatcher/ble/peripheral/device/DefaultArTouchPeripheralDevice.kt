@@ -3,12 +3,8 @@ package ir.erfansn.artouch.dispatcher.ble.peripheral.device
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothHidDeviceAppSdpSettings
 import android.content.Context
-import android.graphics.PointF
 import android.util.Log
-import androidx.core.graphics.component1
-import androidx.core.graphics.component2
-import androidx.core.graphics.times
-import androidx.core.graphics.toPoint
+import ir.erfansn.artouch.common.util.Point
 import ir.erfansn.artouch.dispatcher.ble.ArTouchSpecification
 import ir.erfansn.artouch.dispatcher.ble.peripheral.DefaultBleHidPeripheralManager
 import ir.erfansn.artouch.dispatcher.ble.peripheral.BleHidConnectionState
@@ -16,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 internal class DefaultArTouchPeripheralDevice(context: Context) : ArTouchPeripheralDevice {
 
@@ -51,13 +48,13 @@ internal class DefaultArTouchPeripheralDevice(context: Context) : ArTouchPeriphe
     }
 
     @OptIn(ExperimentalUnsignedTypes::class)
-    override fun dispatchTouch(tapped: Boolean, point: PointF) {
+    override fun dispatchTouch(tapped: Boolean, point: Point) {
         check(connectionState.value == BleHidConnectionState.Connected)
         require(point.x in 0f..1f && point.y in 0f..1f)
 
-        val (x, y) = (point * 100_00f).toPoint()
-        val (lx, mx) = x.latestAndMostSignificantByte()
-        val (ly, my) = y.latestAndMostSignificantByte()
+        val (x, y) = point * 100_00f
+        val (lx, mx) = x.roundToInt().latestAndMostSignificantByte()
+        val (ly, my) = y.roundToInt().latestAndMostSignificantByte()
 
         bleHidPeripheralManager.trySendReport(
             target = centralDevice,

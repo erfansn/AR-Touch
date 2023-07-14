@@ -1,6 +1,6 @@
 package ir.erfansn.artouch.producer.extractor
 
-import android.graphics.PointF
+import ir.erfansn.artouch.common.util.Point
 
 internal class DefaultTouchPositionExtractor : TouchPositionExtractor {
 
@@ -9,16 +9,16 @@ internal class DefaultTouchPositionExtractor : TouchPositionExtractor {
     }
 
     override fun extract(
-        target: PointF,
-        boundary: Array<PointF>,
-    ): PointF {
+        target: Point,
+        boundary: Array<Point>,
+    ): Point {
         require(boundary.size == 4)
 
         return extractTouchPosition(target, boundary)
     }
 
     private external fun extractTouchPosition(
-        target: PointF,
-        boundary: Array<PointF>,
-    ): PointF
+        target: Point,
+        boundary: Array<Point>,
+    ): Point
 }
