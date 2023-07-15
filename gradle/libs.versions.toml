@@ -21,6 +21,7 @@ androidxActivity = "1.7.2"
 koin = "3.4.2"
 koinCompose = "3.4.5"
 koinTest = "3.4.1"
+androidxTestRunner="1.5.2"
 
 [libraries]
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
@@ -52,6 +53,7 @@ io-insert-koin = { module = "io.insert-koin:koin-android", version.ref = "koin" 
 io-insert-koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinCompose" }
 io-insert-koin-test = { module = "io.insert-koin:koin-test", version.ref = "koinTest" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
 
 [bundles]
 camerax = ["androidx-camera-core", "androidx-camera-camera2", "androidx-camera-view", "androidx-camera-lifecycle"]
