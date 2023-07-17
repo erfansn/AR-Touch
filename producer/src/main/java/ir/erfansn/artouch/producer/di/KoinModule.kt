@@ -5,6 +5,8 @@ import ir.erfansn.artouch.producer.detector.hand.HandDetectionResult
 import ir.erfansn.artouch.producer.detector.hand.MediaPipeHandDetector
 import ir.erfansn.artouch.producer.detector.marker.ArUcoMarkerDetector
 import ir.erfansn.artouch.producer.detector.marker.MarkersDetectionResult
+import ir.erfansn.artouch.producer.detector.util.DefaultImageRotationHelper
+import ir.erfansn.artouch.producer.detector.util.ImageRotationHelper
 import ir.erfansn.artouch.producer.extractor.DefaultTouchPositionExtractor
 import ir.erfansn.artouch.producer.extractor.TouchPositionExtractor
 import kotlinx.coroutines.CoroutineScope
@@ -25,6 +27,7 @@ val MARKER_DETECTOR_QUALIFIER = qualifier(MARKER_DETECTOR_NAME)
 val producerModule = module {
     single { CoroutineScope(Dispatchers.Default) }
 
+    factoryOf(::DefaultImageRotationHelper) bind ImageRotationHelper::class
     factoryOf(::MediaPipeHandDetector) {
         named(HAND_DETECTOR_NAME)
         bind<ObjectDetector<HandDetectionResult>>()
