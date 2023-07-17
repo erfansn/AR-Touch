@@ -1,8 +1,6 @@
 package ir.erfansn.artouch.producer.detector.hand
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Matrix
 import android.graphics.PixelFormat
 import android.os.SystemClock
 import android.util.Log
@@ -14,6 +12,7 @@ import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker
 import ir.erfansn.artouch.producer.detector.ObjectDetector
 import ir.erfansn.artouch.common.util.Size
+import ir.erfansn.artouch.producer.detector.util.ImageRotationHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,6 +22,7 @@ import kotlinx.coroutines.flow.shareIn
 internal class MediaPipeHandDetector(
     context: Context,
     externalScope: CoroutineScope,
+    private val imageRotationHelper: ImageRotationHelper,
 ) : ObjectDetector<HandDetectionResult> {
 
     private var handLandmarker: HandLandmarker? = null
@@ -78,14 +78,9 @@ internal class MediaPipeHandDetector(
         val bitmapBuffer = imageProxy.toBitmap()
         imageProxy.close()
 
-        val matrix = Matrix().apply {
-            // Rotate the frame received from the camera to be in the same direction as it'll be shown
-            postRotate(imageProxy.imageInfo.rotationDegrees.toFloat())
+        val rotatedBitmap = with(imageRotationHelper) {
+            bitmapBuffer.rotate(degrees = imageProxy.imageInfo.rotationDegrees)
         }
-        val rotatedBitmap = Bitmap.createBitmap(
-            bitmapBuffer, 0, 0, bitmapBuffer.width, bitmapBuffer.height,
-            matrix, true
-        )
 
         // Convert the input Bitmap object to an MPImage object to run inference
         val mpImage = BitmapImageBuilder(rotatedBitmap).build()

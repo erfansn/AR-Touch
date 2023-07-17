@@ -6,13 +6,16 @@ import androidx.camera.core.ImageProxy
 import ir.erfansn.artouch.producer.detector.ObjectDetector
 import ir.erfansn.artouch.common.util.Point
 import ir.erfansn.artouch.common.util.Size
+import ir.erfansn.artouch.producer.detector.util.ImageRotationHelper
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import java.nio.ByteBuffer
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
-internal class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
+internal class ArUcoMarkerDetector(
+    private val imageRotationHelper: ImageRotationHelper,
+) : ObjectDetector<MarkersDetectionResult> {
 
     init {
         System.loadLibrary("aruco_detector")
@@ -28,18 +31,24 @@ internal class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
         val adjustedImageSize: Size
         val markersPosition: Array<Point>
         val inferenceTime = measureTime {
-            val (outputWidth, outputHeight, rotatedImageBuffer) = rotateYImage(
-                width = imageProxy.width,
-                height = imageProxy.height,
-                rotationDegrees = imageProxy.imageInfo.rotationDegrees,
-                inputBuffer = imageProxy.planes[0].buffer,
-            )
+            val yBuffer = imageProxy.planes[0].buffer
 
-            adjustedImageSize = Size(outputWidth, outputHeight)
+            val (rotatedBuffer, outputRowStride) = with(imageRotationHelper) {
+                yBuffer.rotate(
+                    rowStride = imageProxy.width,
+                    degrees = imageProxy.imageInfo.rotationDegrees,
+                )
+            }
+
+            val column = rotatedBuffer.capacity() / outputRowStride
+            adjustedImageSize = Size(
+                width = outputRowStride,
+                height = column,
+            )
             markersPosition = detectArUco(
-                width = outputWidth,
-                height = outputHeight,
-                frameBuffer = rotatedImageBuffer,
+                width = outputRowStride,
+                height = column,
+                frameBuffer = rotatedBuffer,
             )
         }
 
@@ -57,37 +66,6 @@ internal class ArUcoMarkerDetector : ObjectDetector<MarkersDetectionResult> {
 
         imageProxy.close()
     }
-
-    private fun rotateYImage(
-        width: Int,
-        height: Int,
-        rotationDegrees: Int,
-        inputBuffer: ByteBuffer,
-    ): Triple<Int, Int, ByteBuffer> {
-        val (outputWidth, outputHeight) = when (rotationDegrees) {
-            90, 270 -> height to width
-            0, 180 -> width to height
-            else -> throw IllegalStateException()
-        }
-        val rotatedImageBuffer = ByteBuffer.allocateDirect(outputWidth * outputHeight)
-
-        rotateYImage(
-            width = width,
-            height = height,
-            rotationDegrees = rotationDegrees,
-            inputBuffer = inputBuffer,
-            outputBuffer = rotatedImageBuffer,
-        )
-        return Triple(outputWidth, outputHeight, rotatedImageBuffer)
-    }
-
-    private external fun rotateYImage(
-        width: Int,
-        height: Int,
-        rotationDegrees: Int,
-        inputBuffer: ByteBuffer,
-        outputBuffer: ByteBuffer,
-    )
 
     private external fun detectArUco(
         width: Int,
