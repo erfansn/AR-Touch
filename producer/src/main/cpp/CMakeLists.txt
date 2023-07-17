@@ -9,6 +9,8 @@ cmake_minimum_required(VERSION 3.22.1)
 # Declares and names the project.
 
 project(ar_touch)
+# TODO: Set build type from argument in build variant configurations
+# set(CMAKE_BUILD_TYPE Release)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -29,7 +31,12 @@ add_library(
         SHARED
         touch_position_extractor.cpp)
 
-find_package(OpenCV 4.7 REQUIRED java)
+add_library(
+        utils
+        SHARED
+        utils.cpp)
+
+find_package(OpenCV REQUIRED core imgproc highgui calib3d)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -59,3 +66,7 @@ target_link_libraries(
         touch_position_extractor
         ${log-lib}
         ${OpenCV_LIBRARIES})
+
+target_link_libraries(
+        utils
+        ${log-lib})
