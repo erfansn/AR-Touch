@@ -15,7 +15,7 @@ android {
 
         externalNativeBuild {
             cmake {
-                cppFlags "-std=c++11 -fexceptions -frtti"
+                cppFlags "-std=c++11", "-fexceptions", "-frtti"
                 abiFilters "arm64-v8a"
                 
                 def path = obtainOpenCvNativeSdkDirPath()
@@ -64,6 +64,8 @@ dependencies {
     testImplementation libs.junit4
     testImplementation libs.kotlinx.coroutines.test
     androidTestImplementation libs.androidx.test.runner
+    androidTestImplementation libs.androidx.test.core
+    androidTestImplementation libs.kotlinx.coroutines.test
 }
 
 def obtainOpenCvNativeSdkDirPath() {
