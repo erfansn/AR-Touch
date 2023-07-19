@@ -23,6 +23,7 @@ koinCompose = "3.4.5"
 koinTest = "3.4.1"
 androidxTestRunner = "1.5.2"
 androidxTestCore = "1.5.0"
+androidxBenchmark = "1.1.1"
 
 [libraries]
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
@@ -56,6 +57,7 @@ io-insert-koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTestCore" }
+androidx-benchmark = { module = "androidx.benchmark:benchmark-junit4", version.ref = "androidxBenchmark" }
 
 [bundles]
 camerax = ["androidx-camera-core", "androidx-camera-camera2", "androidx-camera-view", "androidx-camera-lifecycle"]
@@ -66,3 +68,4 @@ android-application = { id = "com.android.application", version.ref = "androidGr
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+benchmark = { id = "androidx.benchmark", version.ref = "androidxBenchmark" }
