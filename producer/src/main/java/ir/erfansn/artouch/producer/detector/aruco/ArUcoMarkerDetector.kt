@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import java.nio.ByteBuffer
 import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
+import kotlin.time.measureTimedValue
 
 internal class ArUcoMarkerDetector(
     private val imageRotationHelper: ImageRotationHelper,
@@ -28,24 +28,21 @@ internal class ArUcoMarkerDetector(
     override fun detect(imageProxy: ImageProxy) {
         require(imageProxy.format == ImageFormat.YUV_420_888) { "Image format must be YUV 420 888." }
 
-        val adjustedImageSize: Size
-        val markersPosition: Array<Point>
-        val inferenceTime = measureTime {
-            val yBuffer = imageProxy.planes[0].buffer
-
-            val (rotatedBuffer, outputRowStride) = with(imageRotationHelper) {
-                yBuffer.rotate(
-                    rowStride = imageProxy.width,
-                    degrees = imageProxy.imageInfo.rotationDegrees,
-                )
-            }
-
-            val column = rotatedBuffer.capacity() / outputRowStride
-            adjustedImageSize = Size(
-                width = outputRowStride,
-                height = column,
+        val yBuffer = imageProxy.planes[0].buffer
+        val (rotatedBuffer, outputRowStride) = with(imageRotationHelper) {
+            yBuffer.rotate(
+                rowStride = imageProxy.width,
+                degrees = imageProxy.imageInfo.rotationDegrees,
             )
-            markersPosition = detectArUco(
+        }
+
+        val column = rotatedBuffer.capacity() / outputRowStride
+        val adjustedImageSize = Size(
+            width = outputRowStride,
+            height = column,
+        )
+        val (markersPosition, inferenceTime) = measureTimedValue {
+            detectArUco(
                 width = outputRowStride,
                 height = column,
                 frameBuffer = rotatedBuffer,
