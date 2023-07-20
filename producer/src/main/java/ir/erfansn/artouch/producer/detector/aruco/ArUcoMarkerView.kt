@@ -74,6 +74,6 @@ class ArUcoMarkerView(context: Context?, attrs: AttributeSet?) : View(context, a
         }
 
     companion object {
-        private const val TAG = "MarkersPositionView"
+        private const val TAG = "ArUcoMarkerView"
     }
 }
