@@ -3,7 +3,7 @@ package ir.erfansn.artouch.producer
 import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmark
 import ir.erfansn.artouch.producer.detector.hand.HandDetectionResult
-import ir.erfansn.artouch.producer.detector.marker.MarkersDetectionResult
+import ir.erfansn.artouch.producer.detector.aruco.ArUcoDetectionResult
 import ir.erfansn.artouch.producer.extractor.TouchPositionExtractor
 import ir.erfansn.artouch.common.util.Point
 import ir.erfansn.artouch.common.util.Size
@@ -26,18 +26,18 @@ class DefaultTouchEventProducerTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()
 
-    private val initHandResult = HandDetectionResult(
+    private val initHandDetectionResult = HandDetectionResult(
         inferenceTime = 0,
         inputImageSize = Size(1, 1),
         landmarks = listOf(NormalizedLandmark.create(0f, 0f, 0f))
     )
-    private val initMarkersResult = MarkersDetectionResult(
+    private val initArUcoDetectionResult = ArUcoDetectionResult(
         inferenceTime = 0,
         inputImageSize = Size(1, 1),
         positions = arrayOf(Point(0f, 0f))
     )
-    private val handDetectionResult = MutableStateFlow(initHandResult)
-    private val markersDetectionResult = MutableStateFlow(initMarkersResult)
+    private val handDetectionResult = MutableStateFlow(initHandDetectionResult)
+    private val arucoDetectionResult = MutableStateFlow(initArUcoDetectionResult)
     private lateinit var touchEventProducer: TouchEventProducer
 
     @Before
@@ -48,7 +48,7 @@ class DefaultTouchEventProducerTest {
         }
         touchEventProducer = DefaultTouchEventProducer(
             handDetectionResult = handDetectionResult,
-            markersDetectionResult = markersDetectionResult,
+            arUcoDetectionResult = arucoDetectionResult,
             touchPositionExtractor = stubTouchPositionExtractor,
             defaultDispatcher = testDispatcher,
         )
@@ -56,8 +56,8 @@ class DefaultTouchEventProducerTest {
 
     @After
     fun tearDown() {
-        handDetectionResult.value = initHandResult
-        markersDetectionResult.value = initMarkersResult
+        handDetectionResult.value = initHandDetectionResult
+        arucoDetectionResult.value = initArUcoDetectionResult
     }
 
     @Test
@@ -65,7 +65,7 @@ class DefaultTouchEventProducerTest {
         handDetectionResult.update {
             it.copy(inputImageSize = Size(4, 3))
         }
-        markersDetectionResult.update {
+        arucoDetectionResult.update {
             it.copy(inputImageSize = Size(16, 9))
         }
 
@@ -78,7 +78,7 @@ class DefaultTouchEventProducerTest {
 
     @Test
     fun producesReleasedEvent_withoutMarkers() = runTest(testDispatcher) {
-        markersDetectionResult.update {
+        arucoDetectionResult.update {
             it.copy(positions = emptyArray())
         }
 

@@ -10,7 +10,7 @@ import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker
 import kotlin.math.max
 
-class HandLandmarksView(context: Context, attrs: AttributeSet) : View(context, attrs) {
+class HandLandmarkerView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private var pointPaint = Paint()
     private var linePaint = Paint()

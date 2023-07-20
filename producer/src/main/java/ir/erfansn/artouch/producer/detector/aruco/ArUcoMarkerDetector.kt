@@ -1,4 +1,4 @@
-package ir.erfansn.artouch.producer.detector.marker
+package ir.erfansn.artouch.producer.detector.aruco
 
 import android.graphics.ImageFormat
 import android.util.Log
@@ -15,13 +15,13 @@ import kotlin.time.measureTime
 
 internal class ArUcoMarkerDetector(
     private val imageRotationHelper: ImageRotationHelper,
-) : ObjectDetector<MarkersDetectionResult> {
+) : ObjectDetector<ArUcoDetectionResult> {
 
     init {
         System.loadLibrary("aruco_detector")
     }
 
-    private val _result = MutableSharedFlow<MarkersDetectionResult>(extraBufferCapacity = 1)
+    private val _result = MutableSharedFlow<ArUcoDetectionResult>(extraBufferCapacity = 1)
     override val result = _result.asSharedFlow()
 
     @OptIn(ExperimentalTime::class)
@@ -52,7 +52,7 @@ internal class ArUcoMarkerDetector(
             )
         }
 
-        MarkersDetectionResult(
+        ArUcoDetectionResult(
             inferenceTime = inferenceTime.inWholeMilliseconds,
             inputImageSize = adjustedImageSize,
             positions = if (markersPosition.any { it == Point(-1f, -1f) }) {

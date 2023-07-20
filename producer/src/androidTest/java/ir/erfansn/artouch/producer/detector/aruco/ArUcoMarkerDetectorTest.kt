@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalStdlibApi::class)
 
-package ir.erfansn.artouch.producer.detector.marker
+package ir.erfansn.artouch.producer.detector.aruco
 
 import android.content.Context
 import android.graphics.Bitmap

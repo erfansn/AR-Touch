@@ -5,8 +5,8 @@ import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmark
 import ir.erfansn.artouch.common.util.Point
 import ir.erfansn.artouch.common.util.Size
+import ir.erfansn.artouch.producer.detector.aruco.ArUcoDetectionResult
 import ir.erfansn.artouch.producer.detector.hand.HandDetectionResult
-import ir.erfansn.artouch.producer.detector.marker.MarkersDetectionResult
 import ir.erfansn.artouch.producer.extractor.TouchPositionExtractor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +22,7 @@ import kotlin.math.hypot
 
 class DefaultTouchEventProducer(
     handDetectionResult: Flow<HandDetectionResult>,
-    markersDetectionResult: Flow<MarkersDetectionResult>,
+    arUcoDetectionResult: Flow<ArUcoDetectionResult>,
     touchPositionExtractor: TouchPositionExtractor,
     defaultDispatcher: CoroutineDispatcher,
 ) : TouchEventProducer {
@@ -30,10 +30,10 @@ class DefaultTouchEventProducer(
     private var previousTouchPosition = Point(0f, 0f)
 
     override val touchEvent = handDetectionResult
-        .combine(markersDetectionResult) { hand, markers ->
-            require(isSameAspectRatio(hand.inputImageSize, markers.inputImageSize))
+        .combine(arUcoDetectionResult) { hand, aruco ->
+            require(isSameAspectRatio(hand.inputImageSize, aruco.inputImageSize))
             require(hand.landmarks.isNotEmpty())
-            require(markers.positions.isNotEmpty())
+            require(aruco.positions.isNotEmpty())
 
             hand.landmarks.let {
                 val (touchFingerMcpX, touchFingerMcpY) = calculateCenter(
@@ -69,7 +69,7 @@ class DefaultTouchEventProducer(
                     pressed = (it[HandLandmark.WRIST].z() > MAX_HAND_DEPTH && touchFingersLength <= MAX_FINGERS_LENGTH) || touchFingersAngle <= MAX_FINGERS_ANGLE,
                     position = touchPositionExtractor.extract(
                         target = touchFingersCenterPoint,
-                        boundary = markers.positions,
+                        boundary = aruco.positions,
                     )
                 )
             }

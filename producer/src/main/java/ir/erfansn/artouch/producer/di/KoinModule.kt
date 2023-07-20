@@ -2,9 +2,9 @@ package ir.erfansn.artouch.producer.di
 
 import ir.erfansn.artouch.producer.detector.ObjectDetector
 import ir.erfansn.artouch.producer.detector.hand.HandDetectionResult
-import ir.erfansn.artouch.producer.detector.hand.MediaPipeHandDetector
-import ir.erfansn.artouch.producer.detector.marker.ArUcoMarkerDetector
-import ir.erfansn.artouch.producer.detector.marker.MarkersDetectionResult
+import ir.erfansn.artouch.producer.detector.hand.HandLandmarkerDetector
+import ir.erfansn.artouch.producer.detector.aruco.ArUcoMarkerDetector
+import ir.erfansn.artouch.producer.detector.aruco.ArUcoDetectionResult
 import ir.erfansn.artouch.producer.detector.util.DefaultImageRotationHelper
 import ir.erfansn.artouch.producer.detector.util.ImageRotationHelper
 import ir.erfansn.artouch.producer.extractor.DefaultTouchPositionExtractor
@@ -19,22 +19,22 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 private const val HAND_DETECTOR_NAME = "hand_detector"
-private const val MARKER_DETECTOR_NAME = "marker_detector"
+private const val ARUCO_DETECTOR_NAME = "aruco_detector"
 
 val HAND_DETECTOR_QUALIFIER = qualifier(HAND_DETECTOR_NAME)
-val MARKER_DETECTOR_QUALIFIER = qualifier(MARKER_DETECTOR_NAME)
+val ARUCO_DETECTOR_QUALIFIER = qualifier(ARUCO_DETECTOR_NAME)
 
 val producerModule = module {
     single { CoroutineScope(Dispatchers.Default) }
 
     factoryOf(::DefaultImageRotationHelper) bind ImageRotationHelper::class
-    factoryOf(::MediaPipeHandDetector) {
+    factoryOf(::HandLandmarkerDetector) {
         named(HAND_DETECTOR_NAME)
         bind<ObjectDetector<HandDetectionResult>>()
     }
     factoryOf(::ArUcoMarkerDetector) {
-        named(MARKER_DETECTOR_NAME)
-        bind<ObjectDetector<MarkersDetectionResult>>()
+        named(ARUCO_DETECTOR_NAME)
+        bind<ObjectDetector<ArUcoDetectionResult>>()
     }
     factoryOf(::DefaultTouchPositionExtractor) bind TouchPositionExtractor::class
 }

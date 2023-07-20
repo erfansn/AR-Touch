@@ -10,13 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ir.erfansn.artouch.producer.detector.marker.MarkersPositionView
-        android:id="@+id/markers_position"
+    <ir.erfansn.artouch.producer.detector.aruco.ArUcoMarkerView
+        android:id="@+id/aruco_markers_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ir.erfansn.artouch.producer.detector.hand.HandLandmarksView
-        android:id="@+id/hand_landmarks"
+    <ir.erfansn.artouch.producer.detector.hand.HandLandmarkerView
+        android:id="@+id/hand_landmarks_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

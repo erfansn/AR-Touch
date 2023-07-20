@@ -8,7 +8,7 @@ import ir.erfansn.artouch.dispatcher.ble.peripheral.device.ArTouchPeripheralDevi
 import ir.erfansn.artouch.producer.DefaultTouchEventProducer
 import ir.erfansn.artouch.producer.detector.ObjectDetector
 import ir.erfansn.artouch.producer.detector.hand.HandDetectionResult
-import ir.erfansn.artouch.producer.detector.marker.MarkersDetectionResult
+import ir.erfansn.artouch.producer.detector.aruco.ArUcoDetectionResult
 import ir.erfansn.artouch.producer.extractor.TouchPositionExtractor
 import ir.erfansn.artouch.common.util.Point
 import ir.erfansn.artouch.ui.touch.TouchFragment.Companion.CENTRAL_DEVICE_KEY
@@ -20,7 +20,7 @@ class TouchViewModel(
     touchPositionExtractor: TouchPositionExtractor,
     private val arTouchPeripheralDevice: ArTouchPeripheralDevice,
     private val handDetector: ObjectDetector<HandDetectionResult>,
-    private val markerDetector: ObjectDetector<MarkersDetectionResult>,
+    private val arucoDetector: ObjectDetector<ArUcoDetectionResult>,
 ) : ViewModel() {
 
     init {
@@ -31,11 +31,11 @@ class TouchViewModel(
 
     val handDetectionResult = handDetector.result
 
-    val markerDetectionResult = markerDetector.result
+    val arucoDetectionResult = arucoDetector.result
 
     private val touchEventProducer = DefaultTouchEventProducer(
         handDetectionResult = handDetectionResult,
-        markersDetectionResult = markerDetectionResult,
+        arUcoDetectionResult = arucoDetectionResult,
         touchPositionExtractor = touchPositionExtractor,
         defaultDispatcher = defaultDispatcher,
     )
@@ -54,8 +54,8 @@ class TouchViewModel(
         handDetector.detect(imageProxy)
     }
 
-    fun detectMarker(imageProxy: ImageProxy) {
-        markerDetector.detect(imageProxy)
+    fun detectArUco(imageProxy: ImageProxy) {
+        arucoDetector.detect(imageProxy)
     }
 
     fun dispatchTouch(tapped: Boolean, point: Point) {

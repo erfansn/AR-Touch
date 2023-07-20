@@ -1,4 +1,4 @@
-package ir.erfansn.artouch.producer.detector.marker
+package ir.erfansn.artouch.producer.detector.aruco
 
 import android.content.Context
 import android.graphics.Canvas
@@ -10,7 +10,7 @@ import android.view.View
 import ir.erfansn.artouch.common.util.Point
 import kotlin.math.max
 
-class MarkersPositionView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
+class ArUcoMarkerView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     private val pointPaint = Paint()
     private val linePaint = Paint()
@@ -59,7 +59,7 @@ class MarkersPositionView(context: Context?, attrs: AttributeSet?) : View(contex
             )
         }
 
-    var result: MarkersDetectionResult? = null
+    var result: ArUcoDetectionResult? = null
         set(value) {
             field = value
             value ?: return

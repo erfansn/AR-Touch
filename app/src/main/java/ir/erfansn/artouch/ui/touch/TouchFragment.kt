@@ -59,7 +59,7 @@ class TouchFragment : Fragment() {
 
     private var preview: Preview? = null
     private var handAnalysis: ImageAnalysis? = null
-    private var markerAnalysis: ImageAnalysis? = null
+    private var arucoAnalysis: ImageAnalysis? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,14 +99,14 @@ class TouchFragment : Fragment() {
                     launch {
                         viewModel.handDetectionResult
                             .collect {
-                                binding.handLandmarks.result = it
+                                binding.handLandmarksView.result = it
                                 Log.d(TAG, "Hand detection time inference: ${it.inferenceTime}")
                             }
                     }
                     launch {
-                        viewModel.markerDetectionResult
+                        viewModel.arucoDetectionResult
                             .collect {
-                                binding.markersPosition.result = it
+                                binding.arucoMarkersView.result = it
                                 Log.d(TAG, "ArUco detection time inference: ${it.inferenceTime}")
                             }
                     }
@@ -208,7 +208,7 @@ class TouchFragment : Fragment() {
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_BLOCK_PRODUCER)
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
             .build()
-        markerAnalysis = ImageAnalysis.Builder()
+        arucoAnalysis = ImageAnalysis.Builder()
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
             .setResolutionSelector(ResolutionSelector.Builder()
                 .setAspectRatioStrategy(AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY)
@@ -221,13 +221,13 @@ class TouchFragment : Fragment() {
             CameraSelector.DEFAULT_BACK_CAMERA,
             preview,
             handAnalysis,
-            markerAnalysis
+            arucoAnalysis
         )
 
         camera.setupFocusController()
         preview?.setSurfaceProvider(binding.preview.surfaceProvider)
         handAnalysis?.setAnalyzer(backgroundExecutor, viewModel::detectHand)
-        markerAnalysis?.setAnalyzer(backgroundExecutor, viewModel::detectMarker)
+        arucoAnalysis?.setAnalyzer(backgroundExecutor, viewModel::detectArUco)
     }
 
     private fun Camera.setupFocusController() {
@@ -288,9 +288,11 @@ class TouchFragment : Fragment() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        preview?.targetRotation = binding.preview.display.rotation
-        handAnalysis?.targetRotation = binding.preview.display.rotation
-        markerAnalysis?.targetRotation = binding.preview.display.rotation
+        binding.preview.display.rotation.also {
+            preview?.targetRotation = it
+            handAnalysis?.targetRotation = it
+            arucoAnalysis?.targetRotation = it
+        }
     }
 
     override fun onDestroyView() {

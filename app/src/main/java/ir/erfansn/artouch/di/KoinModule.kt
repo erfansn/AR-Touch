@@ -2,7 +2,7 @@ package ir.erfansn.artouch.di
 
 import ir.erfansn.artouch.dispatcher.di.dispatcherModule
 import ir.erfansn.artouch.producer.di.HAND_DETECTOR_QUALIFIER
-import ir.erfansn.artouch.producer.di.MARKER_DETECTOR_QUALIFIER
+import ir.erfansn.artouch.producer.di.ARUCO_DETECTOR_QUALIFIER
 import ir.erfansn.artouch.producer.di.producerModule
 import ir.erfansn.artouch.ui.configuration.ConfigurationViewModel
 import ir.erfansn.artouch.ui.touch.TouchViewModel
@@ -24,7 +24,7 @@ val appModule = module {
             get(),
             get(),
             get(HAND_DETECTOR_QUALIFIER),
-            get(MARKER_DETECTOR_QUALIFIER),
+            get(ARUCO_DETECTOR_QUALIFIER),
         )
     }
 }

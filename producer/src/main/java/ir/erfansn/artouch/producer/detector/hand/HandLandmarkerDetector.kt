@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.shareIn
 
-internal class MediaPipeHandDetector(
+internal class HandLandmarkerDetector(
     context: Context,
     externalScope: CoroutineScope,
     private val imageRotationHelper: ImageRotationHelper,

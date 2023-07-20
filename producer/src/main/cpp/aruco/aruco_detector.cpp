@@ -8,7 +8,7 @@
 
 extern "C"
 JNIEXPORT jobjectArray JNICALL
-Java_ir_erfansn_artouch_producer_detector_marker_ArUcoMarkerDetector_detectArUco(
+Java_ir_erfansn_artouch_producer_detector_aruco_ArUcoMarkerDetector_detectArUco(
         JNIEnv *env, jobject thiz,
         jint width,
         jint height,

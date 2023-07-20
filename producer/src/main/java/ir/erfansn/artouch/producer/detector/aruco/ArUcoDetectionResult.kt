@@ -1,9 +1,9 @@
-package ir.erfansn.artouch.producer.detector.marker
+package ir.erfansn.artouch.producer.detector.aruco
 
 import ir.erfansn.artouch.common.util.Point
 import ir.erfansn.artouch.common.util.Size
 
-data class MarkersDetectionResult(
+data class ArUcoDetectionResult(
     val inferenceTime: Long,
     val inputImageSize: Size,
     val positions: Array<Point>,
@@ -12,7 +12,7 @@ data class MarkersDetectionResult(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as MarkersDetectionResult
+        other as ArUcoDetectionResult
 
         if (inferenceTime != other.inferenceTime) return false
         if (inputImageSize != other.inputImageSize) return false
