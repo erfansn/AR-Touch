@@ -53,7 +53,7 @@ class TouchFragment : Fragment() {
 
     private var _binding: FragmentTouchBinding? = null
     private val binding get() = _binding!!
-    private val backgroundExecutor = Executors.newFixedThreadPool(2)
+    private val backgroundExecutor = Executors.newWorkStealingPool(2)
 
     private val viewModel by viewModel<TouchViewModel>()
 
@@ -127,6 +127,7 @@ class TouchFragment : Fragment() {
                                 BleHidConnectionState.Connected -> {
                                     binding.connectionState.isVisible = false
                                 }
+
                                 BleHidConnectionState.Disconnected -> with(binding) {
                                     connectionState.isVisible = true
                                     connectingIndicator.isVisible = false
@@ -135,6 +136,7 @@ class TouchFragment : Fragment() {
                                     utilityButton.isVisible = true
                                     utilityButton.text = getString(R.string.select_another_device)
                                 }
+
                                 BleHidConnectionState.Connecting -> with(binding) {
                                     connectionState.isVisible = true
                                     connectingIndicator.isVisible = true
@@ -143,6 +145,7 @@ class TouchFragment : Fragment() {
                                     utilityButton.isVisible = true
                                     utilityButton.text = getString(R.string.cancel)
                                 }
+
                                 BleHidConnectionState.FailedToConnect -> with(binding) {
                                     connectionState.isVisible = true
                                     connectingIndicator.isVisible = false
@@ -178,7 +181,9 @@ class TouchFragment : Fragment() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.touchEvent) { touchPosition, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout() or WindowInsetsCompat.Type.statusBars())
 
-            touchPosition.updateLayoutParams<MarginLayoutParams> { topMargin = touchEventTopMargin + insets.top }
+            touchPosition.updateLayoutParams<MarginLayoutParams> {
+                topMargin = touchEventTopMargin + insets.top
+            }
             WindowInsetsCompat.CONSUMED
         }
     }
@@ -210,9 +215,11 @@ class TouchFragment : Fragment() {
             .build()
         arucoAnalysis = ImageAnalysis.Builder()
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
-            .setResolutionSelector(ResolutionSelector.Builder()
-                .setAspectRatioStrategy(AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY)
-                .build())
+            .setResolutionSelector(
+                ResolutionSelector.Builder()
+                    .setAspectRatioStrategy(AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY)
+                    .build()
+            )
             .build()
 
         unbindAll()
@@ -231,38 +238,49 @@ class TouchFragment : Fragment() {
     }
 
     private fun Camera.setupFocusController() {
-        val gestureDetector = GestureDetectorCompat(requireContext(), object : GestureDetector.SimpleOnGestureListener() {
-            private var isManuallyFocusEnable = false
+        val gestureDetector = GestureDetectorCompat(
+            requireContext(),
+            object : GestureDetector.SimpleOnGestureListener() {
+                private var isManuallyFocusEnable = false
 
-            @SuppressLint("ShowToast")
-            override fun onLongPress(event: MotionEvent) {
-                if (isManuallyFocusEnable) {
-                    cameraControl.cancelFocusAndMetering()
-                    Snackbar.make(binding.root, getString(R.string.auto_focus_mode_enabled), LENGTH_SHORT).showSafely()
-                    isManuallyFocusEnable = false
+                @SuppressLint("ShowToast")
+                override fun onLongPress(event: MotionEvent) {
+                    if (isManuallyFocusEnable) {
+                        cameraControl.cancelFocusAndMetering()
+                        Snackbar.make(
+                            binding.root,
+                            getString(R.string.auto_focus_mode_enabled),
+                            LENGTH_SHORT
+                        ).showSafely()
+                        isManuallyFocusEnable = false
+                    }
+                }
+
+                @SuppressLint("ShowToast")
+                override fun onSingleTapConfirmed(event: MotionEvent): Boolean {
+                    val meteringPoint = DisplayOrientedMeteringPointFactory(
+                        binding.preview.display,
+                        cameraInfo,
+                        binding.preview.width.toFloat(),
+                        binding.preview.height.toFloat(),
+                    )
+                    val focusMeteringAction =
+                        FocusMeteringAction.Builder(meteringPoint.createPoint(event.x, event.y))
+                            .disableAutoCancel()
+                            .build()
+                    cameraControl.startFocusAndMetering(focusMeteringAction)
+                    if (!isManuallyFocusEnable) {
+                        Snackbar.make(
+                            binding.root,
+                            getString(R.string.enable_manually_focus_mode),
+                            LENGTH_LONG
+                        ).showSafely()
+                        isManuallyFocusEnable = true
+                    }
+                    return true
                 }
             }
-
-            @SuppressLint("ShowToast")
-            override fun onSingleTapConfirmed(event: MotionEvent): Boolean {
-                val meteringPoint = DisplayOrientedMeteringPointFactory(
-                    binding.preview.display,
-                    cameraInfo,
-                    binding.preview.width.toFloat(),
-                    binding.preview.height.toFloat(),
-                )
-                val focusMeteringAction =
-                    FocusMeteringAction.Builder(meteringPoint.createPoint(event.x, event.y))
-                        .disableAutoCancel()
-                        .build()
-                cameraControl.startFocusAndMetering(focusMeteringAction)
-                if (!isManuallyFocusEnable) {
-                    Snackbar.make(binding.root, getString(R.string.enable_manually_focus_mode), LENGTH_LONG).showSafely()
-                    isManuallyFocusEnable = true
-                }
-                return true
-            }
-        })
+        )
         binding.preview.setOnTouchListener @SuppressLint("ClickableViewAccessibility") { _, event ->
             gestureDetector.onTouchEvent(event)
             true
