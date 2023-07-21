@@ -83,6 +83,7 @@ dependencies {
 
     testImplementation libs.junit4
     testImplementation libs.io.insert.koin.test
+    testImplementation libs.robolectric
     androidTestImplementation libs.androidx.test.ext
     androidTestImplementation libs.androidx.test.espresso.core
 }

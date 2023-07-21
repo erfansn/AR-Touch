@@ -24,6 +24,7 @@ koinTest = "3.4.1"
 androidxTestRunner = "1.5.2"
 androidxTestCore = "1.5.0"
 androidxBenchmark = "1.1.1"
+robolectric = "4.9"
 
 [libraries]
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
@@ -59,6 +60,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTestCore" }
 androidx-benchmark = { module = "androidx.benchmark:benchmark-junit4", version.ref = "androidxBenchmark" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 
 [bundles]
 camerax = ["androidx-camera-core", "androidx-camera-camera2", "androidx-camera-view", "androidx-camera-lifecycle"]
