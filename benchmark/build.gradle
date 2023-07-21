@@ -37,8 +37,14 @@ android {
 }
 
 dependencies {
+    androidTestImplementation project(':producer')
+
+    androidTestImplementation libs.androidx.camera.core
+
     androidTestImplementation libs.androidx.test.runner
-    androidTestImplementation libs.androidx.test.ext
+    androidTestImplementation libs.androidx.test.core
     androidTestImplementation libs.junit4
     androidTestImplementation libs.androidx.benchmark
+    androidTestImplementation libs.io.insert.koin.test.asProvider()
+    androidTestImplementation libs.io.insert.koin.test.junit4
 }
