@@ -61,6 +61,8 @@ androidx-test-runner = { module = "androidx.test:runner", version.ref = "android
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTestCore" }
 androidx-benchmark = { module = "androidx.benchmark:benchmark-junit4", version.ref = "androidxBenchmark" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 
 [bundles]
 camerax = ["androidx-camera-core", "androidx-camera-camera2", "androidx-camera-view", "androidx-camera-lifecycle"]
