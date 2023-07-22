@@ -1,10 +1,10 @@
 package ir.erfansn.artouch.dispatcher.ble.peripheral.device
 
-import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothHidDeviceAppSdpSettings
 import android.content.Context
 import android.util.Log
 import ir.erfansn.artouch.common.util.Point
+import ir.erfansn.artouch.dispatcher.BondedDevice
 import ir.erfansn.artouch.dispatcher.ble.ArTouchSpecification
 import ir.erfansn.artouch.dispatcher.ble.peripheral.DefaultBleHidPeripheralManager
 import ir.erfansn.artouch.dispatcher.ble.peripheral.BleHidConnectionState
@@ -21,7 +21,7 @@ internal class DefaultArTouchPeripheralDevice(context: Context) : ArTouchPeriphe
     private val bleHidPeripheralManager = DefaultBleHidPeripheralManager(context)
     override val connectionState = bleHidPeripheralManager.connectionState
 
-    override lateinit var centralDevice: BluetoothDevice
+    override lateinit var centralDevice: BondedDevice
 
     override fun connect() {
         check(::centralDevice.isInitialized) { "Must set a central device" }
@@ -36,14 +36,14 @@ internal class DefaultArTouchPeripheralDevice(context: Context) : ArTouchPeriphe
                     ArTouchSpecification.REPORT_DESCRIPTOR
                 )
             )
-            bleHidPeripheralManager.connect(centralDevice)
+            bleHidPeripheralManager.connect(centralDevice.device!!)
         }
     }
 
     override fun disconnect() {
         if (!::centralDevice.isInitialized) return
 
-        bleHidPeripheralManager.disconnect(centralDevice)
+        bleHidPeripheralManager.disconnect(centralDevice.device!!)
         bleHidPeripheralManager.unregisterDevice()
     }
 
@@ -57,7 +57,7 @@ internal class DefaultArTouchPeripheralDevice(context: Context) : ArTouchPeriphe
         val (ly, my) = y.roundToInt().latestAndMostSignificantByte()
 
         bleHidPeripheralManager.trySendReport(
-            target = centralDevice,
+            target = centralDevice.device!!,
             id = ArTouchSpecification.REPORT_ID,
             data = ubyteArrayOf(
                 if (tapped) 0x01u else 0x00u,

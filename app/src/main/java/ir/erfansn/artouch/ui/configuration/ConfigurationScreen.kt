@@ -2,7 +2,6 @@ package ir.erfansn.artouch.ui.configuration
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -68,7 +67,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ConfigurationScreen(
     uiState: ConfigurationUiState,
-    onNavigateToCameraFragment: (Boolean, BluetoothDevice) -> Unit = { _, _ -> },
+    onNavigateToCameraFragment: (Boolean, BondedDevice) -> Unit = { _, _ -> },
     onStartArTouchAdvertiser: () -> Unit = { },
     onStopArTouchAdvertiser: () -> Unit = { },
     onPromptToEnableBluetooth: () -> Unit = { },
@@ -240,7 +239,7 @@ fun ConfigurationScreen(
                             permissions = listOf(CAMERA_PERMISSION),
                             onGranted = {
                                 selectedDeviceItem?.let {
-                                    onNavigateToCameraFragment(shouldShowDebuggingStuff, it.device!!)
+                                    onNavigateToCameraFragment(shouldShowDebuggingStuff, it)
                                 } ?: run {
                                     scope.launch {
                                         snackbarHostState.showSnackbarImmediately(message = context.getString(

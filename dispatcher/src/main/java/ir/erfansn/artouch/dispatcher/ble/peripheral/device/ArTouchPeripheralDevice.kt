@@ -1,14 +1,14 @@
 package ir.erfansn.artouch.dispatcher.ble.peripheral.device
 
-import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import ir.erfansn.artouch.common.util.Point
+import ir.erfansn.artouch.dispatcher.BondedDevice
 import ir.erfansn.artouch.dispatcher.ble.peripheral.BleHidConnectionState
 import kotlinx.coroutines.flow.StateFlow
 
 interface ArTouchPeripheralDevice : DefaultLifecycleObserver {
-    var centralDevice: BluetoothDevice
+    var centralDevice: BondedDevice
     val connectionState: StateFlow<BleHidConnectionState>
     fun connect()
     fun disconnect()
