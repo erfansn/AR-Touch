@@ -34,7 +34,13 @@ internal class DefaultBluetoothHelper(private val context: Context) : BluetoothH
     @SuppressLint("MissingPermission")
     override val bondedDevices = flow {
         while (true) {
-            emit(runCatching { bluetoothAdapter.bondedDevices }.getOrDefault(emptySet()).toList())
+            runCatching {
+                bluetoothAdapter.bondedDevices
+            }.getOrDefault(emptySet()).map {
+                BondedDevice(device = it)
+            }.run {
+                emit(this)
+            }
             delay(1000)
         }
     }

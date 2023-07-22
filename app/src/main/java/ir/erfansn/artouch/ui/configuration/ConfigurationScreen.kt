@@ -15,7 +15,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,7 +49,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -60,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.edit
 import ir.erfansn.artouch.R
+import ir.erfansn.artouch.dispatcher.BondedDevice
 import ir.erfansn.artouch.ui.configuration.ConfigurationFragment.Companion.BLUETOOTH_PERMISSIONS
 import ir.erfansn.artouch.ui.configuration.ConfigurationFragment.Companion.CAMERA_PERMISSION
 import kotlinx.coroutines.launch
@@ -72,7 +71,7 @@ fun ConfigurationScreen(
     onStartArTouchAdvertiser: () -> Unit = { },
     onStopArTouchAdvertiser: () -> Unit = { },
     onPromptToEnableBluetooth: () -> Unit = { },
-    bluetoothBondedDevices: List<BluetoothDevice> = emptyList(),
+    bluetoothBondedDevices: List<BondedDevice> = emptyList(),
 ) {
     var snackbarHeight by remember { mutableStateOf(0.dp) }
     val paddingFromBottom by animateDpAsState(snackbarHeight)
@@ -178,7 +177,7 @@ fun ConfigurationScreen(
                         )
 
                         var selectedDeviceItem by rememberSaveable {
-                            mutableStateOf<BluetoothDevice?>(null)
+                            mutableStateOf<BondedDevice?>(null)
                         }
                         LaunchedEffect(selectedDeviceItem, bluetoothBondedDevices) {
                             if (selectedDeviceItem !in bluetoothBondedDevices) {
@@ -197,8 +196,7 @@ fun ConfigurationScreen(
                                         ListItem(
                                             modifier = Modifier
                                                 .clickable { selectedDeviceItem = it }
-                                                .fillParentMaxWidth()
-                                                .background(color = Color.Red),
+                                                .fillParentMaxWidth(),
                                             leadingContent = {
                                                 RadioButton(
                                                     selected = selectedDeviceItem == it,
@@ -241,7 +239,7 @@ fun ConfigurationScreen(
                             permissions = listOf(CAMERA_PERMISSION),
                             onGranted = {
                                 selectedDeviceItem?.let {
-                                    onNavigateToCameraFragment(shouldShowDebuggingStuff, it)
+                                    onNavigateToCameraFragment(shouldShowDebuggingStuff, it.device!!)
                                 } ?: run {
                                     scope.launch {
                                         snackbarHostState.showSnackbarImmediately(message = context.getString(
