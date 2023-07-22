@@ -1,6 +1,7 @@
 plugins {
     alias libs.plugins.android.library
     alias libs.plugins.kotlin.android
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -39,5 +40,4 @@ dependencies {
 
     testImplementation libs.junit4
     androidTestImplementation libs.androidx.test.ext
-    androidTestImplementation libs.androidx.test.espresso.core
 }
