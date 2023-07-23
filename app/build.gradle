@@ -88,14 +88,17 @@ dependencies {
     implementation libs.io.insert.koin.asProvider()
     implementation libs.io.insert.koin.compose
 
-    debugImplementation libs.androidx.fragment.testing
-
     testImplementation libs.junit4
-    testImplementation libs.io.insert.koin.test
+    testImplementation libs.io.insert.koin.test.asProvider()
+    testImplementation libs.io.insert.koin.test.junit4
     testImplementation libs.robolectric
     testImplementation libs.androidx.test.rules
     testImplementation libs.androidx.compose.ui.test.junit4
-    testImplementation libs.androidx.compose.ui.test.manifest
+    testImplementation libs.androidx.test.ext
+    testImplementation libs.androidx.test.espresso.core
     androidTestImplementation libs.androidx.test.ext
-    androidTestImplementation libs.androidx.test.espresso.core
+    androidTestImplementation libs.androidx.compose.ui.test.junit4
+
+    debugImplementation libs.androidx.fragment.testing
+    debugImplementation libs.androidx.compose.ui.test.manifest
 }
