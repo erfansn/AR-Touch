@@ -25,6 +25,7 @@ androidxTestRunner = "1.5.2"
 androidxTestCore = "1.5.0"
 androidxBenchmark = "1.1.1"
 robolectric = "4.10.3"
+androidxTestRules = "1.5.0"
 
 [libraries]
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
@@ -61,6 +62,7 @@ androidx-test-runner = { module = "androidx.test:runner", version.ref = "android
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTestCore" }
 androidx-benchmark = { module = "androidx.benchmark:benchmark-junit4", version.ref = "androidxBenchmark" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidxTestRules" }
 androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 
