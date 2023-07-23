@@ -66,6 +66,7 @@ dependencies {
     implementation libs.androidx.core
     implementation libs.androidx.appcompat
     implementation libs.androidx.concurrent.futures
+    implementation libs.androidx.fragment.asProvider()
     // To prevent ListenableFuture conflict this dependency temporary is added
     implementation 'com.google.guava:guava:29.0-android'
 
@@ -86,6 +87,8 @@ dependencies {
 
     implementation libs.io.insert.koin.asProvider()
     implementation libs.io.insert.koin.compose
+
+    debugImplementation libs.androidx.fragment.testing
 
     testImplementation libs.junit4
     testImplementation libs.io.insert.koin.test
