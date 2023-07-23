@@ -150,6 +150,7 @@ class TouchFragment : Fragment() {
                                     connectionState.isVisible = true
                                     connectingIndicator.isVisible = false
                                     userMessage.text = getString(R.string.error_when_connecting)
+                                    reconnect.isVisible = false
                                     utilityButton.isVisible = true
                                     utilityButton.text = getString(R.string.select_another_device)
                                 }
