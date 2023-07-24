@@ -15,6 +15,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments clearPackageData: 'true'
 
         ndk {
             //noinspection ChromeOsAbiSupport
@@ -55,6 +56,7 @@ android {
         unitTests {
             includeAndroidResources = true
         }
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
 }
 
@@ -75,9 +77,9 @@ dependencies {
     implementation libs.bundles.navigation
     implementation libs.bundles.camerax
 
-    implementation platform(libs.androidx.compose.bom)
+    def composeBom = platform(libs.androidx.compose.bom)
+    implementation composeBom
     implementation libs.androidx.compose.material3
-    debugImplementation libs.androidx.compose.ui.tooling.asProvider()
     implementation libs.androidx.compose.ui.tooling.preview
     implementation libs.androidx.constraintlayout.compose
     implementation libs.androidx.activity.compose
@@ -96,10 +98,14 @@ dependencies {
     testImplementation libs.androidx.compose.ui.test.junit4
     testImplementation libs.androidx.test.ext
     testImplementation libs.androidx.test.espresso.core
+    androidTestImplementation composeBom
     androidTestImplementation libs.androidx.test.ext
     androidTestImplementation libs.androidx.compose.ui.test.junit4
     androidTestImplementation libs.androidx.test.uiautomator
 
     debugImplementation libs.androidx.fragment.testing
     debugImplementation libs.androidx.compose.ui.test.manifest
+    debugImplementation libs.androidx.compose.ui.tooling.asProvider()
+
+    androidTestUtil libs.androidx.test.orchestrator
 }
