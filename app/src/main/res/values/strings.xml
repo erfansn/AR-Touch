@@ -14,6 +14,8 @@
     <string name="show_debugging_stuff">Show debugging stuff</string>
     <string name="must_select_a_device">Must select a device</string>
     <string name="start_ar_touch">Start AR Touch</string>
+    <string name="github_repository_link">https://github.com/ErfanSn/AR-Touch</string>
+    <string name="content_description_info">Info</string>
 
     <!-- ui/touch -->
     <string name="reconnect">Reconnect</string>
