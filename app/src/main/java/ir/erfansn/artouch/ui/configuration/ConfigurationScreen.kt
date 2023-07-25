@@ -27,7 +27,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -170,11 +174,32 @@ fun ConfigurationScreen(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            modifier = Modifier.padding(vertical = 16.dp),
-                            text = stringResource(R.string.advertising_mode),
-                            style = MaterialTheme.typography.titleLarge
-                        )
+                        Box(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                        ) {
+                            Text(
+                                modifier = Modifier.align(Alignment.Center),
+                                text = stringResource(R.string.advertising_mode),
+                                style = MaterialTheme.typography.titleLarge
+                            )
+
+                            IconButton(
+                                modifier = Modifier.align(Alignment.CenterEnd),
+                                onClick = {
+                                    Intent(Intent.ACTION_VIEW)
+                                        .addCategory(Intent.CATEGORY_BROWSABLE)
+                                        .setData(Uri.parse(context.getString(R.string.github_repository_link)))
+                                        .also(context::startActivity)
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Info,
+                                    contentDescription = stringResource(R.string.content_description_info)
+                                )
+                            }
+                        }
 
                         var selectedDeviceItem by rememberSaveable {
                             mutableStateOf<BondedDevice?>(null)
