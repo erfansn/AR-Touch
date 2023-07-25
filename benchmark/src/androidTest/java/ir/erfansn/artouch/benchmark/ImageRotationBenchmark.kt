@@ -8,12 +8,20 @@ import ir.erfansn.artouch.benchmark.util.loadJpegImageAsBitmap
 import ir.erfansn.artouch.benchmark.util.toYuvPlanes
 import ir.erfansn.artouch.producer.detector.util.ImageRotationHelper
 import ir.erfansn.artouch.producer.di.producerModule
+import org.junit.FixMethodOrder
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runners.MethodSorters
 import org.koin.test.KoinTest
 import org.koin.test.KoinTestRule
 import org.koin.test.get
 
+// If you have a Xiaomi device and cannot run the tests, follow the steps below:
+//  1. Click gutter icon to run whole tests
+//  2. When running a_fakeTest enter follow command in terminal
+//  "adb shell am start -n 'ir.erfansn.artouch.benchmark.test/androidx.test.core.app.InstrumentationActivityInvoker\$BootstrapActivity'"
+//  3. Wait to complete tests
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class ImageRotationBenchmark : KoinTest {
 
     @get:Rule(order = 0)
@@ -23,6 +31,9 @@ class ImageRotationBenchmark : KoinTest {
 
     @get:Rule(order = 1)
     val benchmarkRule = BenchmarkRule()
+
+    @Test
+    fun a_fakeTest() = Unit
 
     @Test
     fun bitmapRotationBenchmark() {
