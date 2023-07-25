@@ -31,7 +31,7 @@ class DefaultTouchEventProducer(
 
     override val touchEvent = handDetectionResult
         .combine(arUcoDetectionResult) { hand, aruco ->
-            require(isSameAspectRatio(hand.inputImageSize, aruco.inputImageSize))
+            require(hand.inputImageSize sameAspectRatioWith aruco.inputImageSize)
             require(hand.landmarks.isNotEmpty())
             require(aruco.positions.isNotEmpty())
 
@@ -65,8 +65,11 @@ class DefaultTouchEventProducer(
                 Log.d(TAG, "Center point between Touch fingers is $touchFingersCenterPoint")
                 Log.d(TAG, "Z coordination of wrist is ${it[HandLandmark.WRIST].z()}")
 
+                val landscapeMode = hand.inputImageSize.width > hand.inputImageSize.height
+                val maxFingerLength = if (landscapeMode) MAX_FINGERS_LENGTH_LANDSCAPE else MAX_FINGERS_LENGTH_PORTRAIT
+                val maxFingerAngle = if (landscapeMode) MAX_FINGERS_ANGLE_LANDSCAPE else MAX_FINGERS_ANGLE_PORTRAIT
                 TouchEvent(
-                    pressed = (it[HandLandmark.WRIST].z() > MAX_HAND_DEPTH && touchFingersLength <= MAX_FINGERS_LENGTH) || touchFingersAngle <= MAX_FINGERS_ANGLE,
+                    pressed = (it[HandLandmark.WRIST].z() > MAX_HAND_DEPTH && touchFingersLength <= maxFingerLength) || touchFingersAngle <= maxFingerAngle,
                     position = touchPositionExtractor.extract(
                         target = touchFingersCenterPoint,
                         boundary = aruco.positions,
@@ -87,8 +90,8 @@ class DefaultTouchEventProducer(
         .flowOn(defaultDispatcher)
         .distinctUntilChanged()
 
-    private fun isSameAspectRatio(first: Size, second: Size): Boolean {
-        return (first.width / second.width) == (first.height / second.height)
+    private infix fun Size.sameAspectRatioWith(other: Size): Boolean {
+        return (width / other.width) == (height / other.height)
     }
 
     private fun calculateCenter(first: NormalizedLandmark, second: NormalizedLandmark): Point {
@@ -102,9 +105,12 @@ class DefaultTouchEventProducer(
         private const val TAG = "DefaultTouchEventProducer"
 
         private const val TOLERANCE = 0.35f
-        private const val MAX_FINGERS_ANGLE = 12f
-        private const val MAX_FINGERS_LENGTH = 0.0385f
+
         private const val MAX_HAND_DEPTH = 1.5739107E-7f
+        private const val MAX_FINGERS_ANGLE_LANDSCAPE = 12f
+        private const val MAX_FINGERS_LENGTH_LANDSCAPE = 0.0385f
+        private const val MAX_FINGERS_ANGLE_PORTRAIT = 14f
+        private const val MAX_FINGERS_LENGTH_PORTRAIT = 0.0425f
     }
 }
 
