@@ -2,4 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="ic_launcher_background">#838bc5</color>
+    <color name="ic_launcher_foreground_tint">@color/white</color>
 </resources>
