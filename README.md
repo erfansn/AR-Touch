@@ -50,7 +50,7 @@ To deliver the touch event independently of the OS, I have utilized [BLE technol
 
 ## 🏗️ Architecture
 Uses modularization approach and follows the [official architecture guidance](https://developer.android.com/topic/architecture).
-![Architecture diagram](https://github.com/ErfanSn/AR-Touch/assets/50053121/6cb17f69-52bb-40d7-bbee-c8f7fe77921a)
+![Architecture diagram](https://github.com/ErfanSn/AR-Touch/assets/50053121/e3ae0733-eddc-418f-b764-002424018cbd)
 
 ## 🧪 Testing & Quality Assurance
 Testing has been performed in this project **without** using common frameworks for mocking, relying solely on *dummy, stub, shadow, and fake* test doubles.
