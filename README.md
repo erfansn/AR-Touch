@@ -88,5 +88,5 @@ Join us in shaping the future of touchless interactions with your generous suppo
 
 ## 📜 License
 
-**AR Touch** is an open-source project licensed under the GNU General Public License version 3.0. 
+**AR Touch** is distributed under the terms of the Apache License (Version 2.0).
 See the [license](LICENSE) for more information.
