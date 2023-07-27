@@ -20,7 +20,7 @@ we must first determine the touchable area. For this purpose, I have utilized [A
 Additionally, I have used hand gestures to generate events, and for their respective computation, I have employed on-device ML-powered solutions available within the [MediaPipe framework](https://developers.google.com/mediapipe).
 
 To deliver the touch event independently of the OS, I have utilized [BLE technology](https://novelbits.io/bluetooth-low-energy-ble-complete-guide/) and the [HID protocol](https://en.wikipedia.org/wiki/Human_interface_device).
-![the_magic_behind_it](https://github.com/ErfanSn/AR-Touch/assets/50053121/942d14c1-6978-4936-9c3a-63ee12119079)
+![The magic behind it](https://github.com/ErfanSn/AR-Touch/assets/50053121/71f48af7-6b2a-4c97-836b-f8703e9dc223)
 
 ## 🔍 Prerequisites
 1. A device which Android 9 was *init version*
@@ -32,7 +32,7 @@ To deliver the touch event independently of the OS, I have utilized [BLE technol
 - Currently, the touch event is generated in line with the content displayed on the phone screen.
 
 ## 🎬 Demo
-[![AR Touch demo](https://github.com/ErfanSn/AR-Touch/assets/50053121/f0291658-a939-484b-9fe9-4301164bbd6c)](https://www.youtube.com/watch?v=woEX1JKgeAo)
+[![Youtube Demo](https://github.com/ErfanSn/AR-Touch/assets/50053121/005c2b5a-b5d6-4d44-a1be-5e80e4e5315d)](https://www.youtube.com/watch?v=woEX1JKgeAo)
 
 ## 🛠️ Technology Stack
 - Kotlin
@@ -50,7 +50,7 @@ To deliver the touch event independently of the OS, I have utilized [BLE technol
 
 ## 🏗️ Architecture
 Uses modularization approach and follows the [official architecture guidance](https://developer.android.com/topic/architecture).
-![Architecture diagram](https://github.com/ErfanSn/AR-Touch/assets/50053121/64769121-c57a-441e-8fc5-fb70e7912c05)
+![Architecture diagram](https://github.com/ErfanSn/AR-Touch/assets/50053121/6cb17f69-52bb-40d7-bbee-c8f7fe77921a)
 
 ## 🧪 Testing & Quality Assurance
 Testing has been performed in this project **without** using common frameworks for mocking, relying solely on *dummy, stub, shadow, and fake* test doubles.
