@@ -2,7 +2,7 @@
 androidGradlePlugin = "8.5.0"
 kotlin = "2.0.0"
 androidxCore = "1.13.1"
-androidxConcurrentFutures = "1.1.0"
+androidxConcurrentFutures = "1.2.0"
 androidxLifecycle = "2.6.1"
 androidxAppCompat = "1.6.1"
 androidxNavigation = "2.6.0"
