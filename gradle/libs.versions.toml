@@ -13,7 +13,6 @@ androidxTestExt = "1.1.5"
 androidxEspresso = "3.5.1"
 mediapipeTasks = "0.10.2"
 kotlinxCoroutines = "1.7.3"
-androidxComposeCompiler = "1.5.3"
 androidxComposeBom = "2023.06.01"
 googleAccompanist = "0.30.1"
 androidxConstraintLayout = "1.0.1"
@@ -55,7 +54,6 @@ google-accompanist-themeadapter-m3 = { group = "com.google.accompanist", name = 
 androidx-constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "androidxConstraintLayout" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
-androidx-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "androidxComposeCompiler" }
 io-insert-koin = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 io-insert-koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinCompose" }
 io-insert-koin-test = { module = "io.insert-koin:koin-test", version.ref = "koinTest" }
@@ -82,4 +80,5 @@ android-application = { id = "com.android.application", version.ref = "androidGr
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 benchmark = { id = "androidx.benchmark", version.ref = "androidxBenchmark" }
