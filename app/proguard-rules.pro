@@ -25,3 +25,6 @@
     public static int d(...);
     public static int i(...);
 }
+
+# https://issuetracker.google.com/issues/336842920#comment31
+-keep class androidx.compose.ui.platform.AndroidCompositionLocals_androidKt { *; }
