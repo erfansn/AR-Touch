@@ -37,7 +37,6 @@ import androidx.camera.core.resolutionselector.AspectRatioStrategy
 import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.concurrent.futures.await
-import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -234,7 +233,7 @@ class TouchFragment : Fragment() {
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
             .setResolutionSelector(
                 ResolutionSelector.Builder()
-                    .setAspectRatioStrategy(AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY)
+                    .setAspectRatioStrategy(AspectRatioStrategy.RATIO_16_9_FALLBACK_AUTO_STRATEGY)
                     .build()
             )
             .build()
@@ -255,7 +254,7 @@ class TouchFragment : Fragment() {
     }
 
     private fun Camera.setupFocusController() {
-        val gestureDetector = GestureDetectorCompat(
+        val gestureDetector = GestureDetector(
             requireContext(),
             object : GestureDetector.SimpleOnGestureListener() {
                 private var isManuallyFocusEnable = false
