@@ -10,9 +10,9 @@ android {
 
     defaultConfig {
         minSdk sdk.versions.min.get().toInteger()
+        targetSdk sdk.versions.target.get().toInteger()
 
         testInstrumentationRunner "androidx.benchmark.junit4.AndroidBenchmarkRunner"
-        testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
     testBuildType = "release"
@@ -35,10 +35,6 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-
-    testOptions {
-        execution 'ANDROIDX_TEST_ORCHESTRATOR'
-    }
 }
 
 dependencies {
@@ -53,6 +49,4 @@ dependencies {
     androidTestImplementation libs.io.insert.koin.test.asProvider()
     androidTestImplementation libs.io.insert.koin.test.junit4
     androidTestImplementation libs.kotlinx.coroutines.test
-
-    androidTestUtil libs.androidx.test.orchestrator
 }
