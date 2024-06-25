@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalStdlibApi::class)
-
 package ir.erfansn.artouch.benchmark.util
 
 import android.content.Context

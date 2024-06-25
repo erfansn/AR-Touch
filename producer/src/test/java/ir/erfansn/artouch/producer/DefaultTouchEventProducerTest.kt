@@ -81,7 +81,7 @@ class DefaultTouchEventProducerTest {
             it.copy(inputImageSize = Size(16, 9))
         }
 
-        // Because infinite retry used in this flow single
+        // Because infinite retry used in this flow the [Flow.single()]
         // doesn't work due infinite suspension of collection
         val touchEvent = touchEventProducer.touchEvent.first()
 

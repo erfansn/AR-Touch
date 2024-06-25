@@ -42,18 +42,10 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import org.junit.Before
-import org.junit.FixMethodOrder
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runners.MethodSorters
 
-// If you have a Xiaomi device and cannot run the tests, follow the steps below:
-//  1. Click gutter icon to run whole tests
-//  2. When running a_fakeTest enter follow command in terminal
-//  "adb shell am start -n 'ir.erfansn.artouch/androidx.test.core.app.InstrumentationActivityInvoker\$BootstrapActivity'"
-//  3. Wait to complete tests
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class RequestPermissionTest {
 
     @get:Rule
@@ -67,9 +59,6 @@ class RequestPermissionTest {
             ComposeableUnderTest()
         }
     }
-
-    @Test
-    fun a_fakeTest() = Unit
 
     @Test
     fun doesNotHappeningAnything_whenIgnoresFirstRequestPermission() {

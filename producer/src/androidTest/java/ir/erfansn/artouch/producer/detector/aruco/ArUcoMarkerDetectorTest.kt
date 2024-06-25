@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalStdlibApi::class)
-
 package ir.erfansn.artouch.producer.detector.aruco
 
 import android.content.Context
@@ -27,7 +25,7 @@ import androidx.camera.core.ImageInfo
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.impl.TagBundle
 import androidx.camera.core.impl.utils.ExifData
-import androidx.test.core.app.ApplicationProvider
+import androidx.test.platform.app.InstrumentationRegistry
 import ir.erfansn.artouch.producer.detector.util.StubImageRotationHelper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
@@ -49,9 +47,10 @@ class ArUcoMarkerDetectorTest {
     private val stubImageRotationHelper = StubImageRotationHelper()
     private val arUcoMarkerDetector = ArUcoMarkerDetector(stubImageRotationHelper)
 
+    private val context = InstrumentationRegistry.getInstrumentation().targetContext
+
     @Test
     fun doesNotDetectAnyMarker_untilAllFourMarkersExist() = runTest(testDispatcher) {
-        val context = ApplicationProvider.getApplicationContext<Context>()
         val incomplete = context.loadJpegImageIntoYuvImageProxy("aruco/incomplete.jpg")
 
         val deferredResult = async { arUcoMarkerDetector.result.first() }
@@ -63,7 +62,6 @@ class ArUcoMarkerDetectorTest {
 
     @Test
     fun detectsMarkersCorrectly_whenAnyFourMarkersExist() = runTest(testDispatcher) {
-        val context = ApplicationProvider.getApplicationContext<Context>()
         val complete = context.loadJpegImageIntoYuvImageProxy("aruco/complete.jpg")
 
         val deferredResult = async { arUcoMarkerDetector.result.first() }
@@ -75,7 +73,6 @@ class ArUcoMarkerDetectorTest {
 
     @Test
     fun usesCachedPosition_whenOneOfMarkersIsCovered() = runTest(testDispatcher) {
-        val context = ApplicationProvider.getApplicationContext<Context>()
         val complete = context.loadJpegImageIntoYuvImageProxy("aruco/complete.jpg")
         val incomplete = context.loadJpegImageIntoYuvImageProxy("aruco/incomplete.jpg")
 
@@ -94,7 +91,6 @@ class ArUcoMarkerDetectorTest {
 
     @Test
     fun usesCachedPositions_until30NextFramesWithoutAnyMarker() = runTest(testDispatcher) {
-        val context = ApplicationProvider.getApplicationContext<Context>()
         val complete = context.loadJpegImageIntoYuvImageProxy("aruco/complete.jpg")
         val empty = context.loadJpegImageIntoYuvImageProxy("aruco/empty.jpg")
 
