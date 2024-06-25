@@ -18,12 +18,10 @@ googleAccompanist = "0.30.1"
 androidxConstraintLayout = "1.0.1"
 androidxActivity = "1.9.0"
 koin = "3.5.6"
-androidxTestRunner = "1.5.2"
-androidxTestCore = "1.5.0"
+androidxTest = "1.6.0"
 androidxFragment = "1.8.0"
 androidxBenchmark = "1.2.4"
 robolectric = "4.12.2"
-androidxTestRules = "1.5.0"
 androidxUiAutomator = "2.3.0"
 androidxTestOrchestrator = "1.4.2"
 
@@ -57,11 +55,11 @@ io-insert-koin-compose = { module = "io.insert-koin:koin-androidx-compose", vers
 io-insert-koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 io-insert-koin-test-junit4 = { module = "io.insert-koin:koin-test-junit4", version.ref = "koin" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
-androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
-androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTestCore" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTest" }
+androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTest" }
 androidx-benchmark = { module = "androidx.benchmark:benchmark-junit4", version.ref = "androidxBenchmark" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
-androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidxTestRules" }
+androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidxTest" }
 androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "androidxFragment" }
