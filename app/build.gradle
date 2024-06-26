@@ -96,12 +96,12 @@ dependencies {
     testImplementation libs.androidx.compose.ui.test.junit4
     testImplementation libs.androidx.test.ext
     testImplementation libs.androidx.test.espresso.core
+    testImplementation libs.androidx.fragment.testing
     androidTestImplementation composeBom
     androidTestImplementation libs.androidx.test.ext
     androidTestImplementation libs.androidx.compose.ui.test.junit4
     androidTestImplementation libs.androidx.test.uiautomator
 
-    debugImplementation libs.androidx.fragment.testing
     debugImplementation libs.androidx.compose.ui.test.manifest
     debugImplementation libs.androidx.compose.ui.tooling.asProvider()
 
