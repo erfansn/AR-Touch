@@ -2,9 +2,11 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "configMigration": true,
   "extends": [
-    "config:base",
+    "config:recommended",
     "schedule:monthly",
     "helpers:pinGitHubActionDigests"
   ],
-  "ignoreDeps": ["com.google.guava:guava"]
+  "ignoreDeps": [
+    "com.google.guava:guava"
+  ]
 }
