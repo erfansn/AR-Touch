@@ -17,9 +17,13 @@ android {
             cmake {
                 cppFlags "-std=c++11", "-fexceptions", "-frtti"
                 abiFilters "arm64-v8a"
-                
-                def path = obtainOpenCvNativeSdkDirPath()
-                arguments "-DOpenCV_DIR=$path", "-DANDROID_STL=c++_shared"
+
+                def opencvSdkPath = obtainOpenCvSdkDirPath()
+                arguments = [
+                    "-DOpenCV_DIR=$opencvSdkPath/sdk/native/jni",
+                    "-DANDROID_STL=c++_shared",
+                    "-DANDROID_ARM_NEON=TRUE",
+                ]
             }
         }
         ndkVersion = "25.2.9519653"
@@ -29,6 +33,8 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            externalNativeBuild.cmake.arguments "-DCMAKE_BUILD_TYPE=Release"
         }
     }
     compileOptions {
@@ -68,7 +74,7 @@ dependencies {
     androidTestImplementation libs.kotlinx.coroutines.test
 }
 
-def obtainOpenCvNativeSdkDirPath() {
+def obtainOpenCvSdkDirPath() {
     def opencvProperties = new Properties()
     def opencvPropertiesFile = rootProject.file('opencv.properties')
     if (!opencvPropertiesFile.exists()) {
@@ -77,11 +83,11 @@ def obtainOpenCvNativeSdkDirPath() {
     try (FileInputStream file = new FileInputStream(opencvPropertiesFile)) {
         opencvProperties.load(file)
     }
-    if (opencvProperties['sdk.native.dir'] == null) {
+    if (opencvProperties['sdk.dir'] == null) {
         throw IllegalArgumentException(
-                "Download Android OpenCV sdk from offical site then set ../sdk/native/jni dir" +
-                        "to 'sdk.native.dir' propertiy inside opencv.properties file in root project"
+                "Download Android OpenCV sdk from offical site then set its location " +
+                        "to 'sdk.dir' propertiy inside opencv.properties file in root project"
         )
     }
-    return opencvProperties['sdk.native.dir']
+    return opencvProperties['sdk.dir']
 }
