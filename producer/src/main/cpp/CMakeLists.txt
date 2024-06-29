@@ -9,8 +9,6 @@ cmake_minimum_required(VERSION 3.22.1)
 # Declares and names the project.
 
 project(ar_touch)
-# TODO: Set build type from argument in build variant configurations
-# set(CMAKE_BUILD_TYPE Release)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.

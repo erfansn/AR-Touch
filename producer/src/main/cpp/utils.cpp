@@ -4,7 +4,6 @@
 
 #define LogD(...)  __android_log_print(ANDROID_LOG_DEBUG, "UtilsNative", __VA_ARGS__)
 
-// TODO: Use google's libyuv to better performance
 extern "C"
 JNIEXPORT void JNICALL
 Java_ir_erfansn_artouch_producer_detector_util_DefaultImageRotationHelper_rotate(
