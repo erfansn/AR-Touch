@@ -36,7 +36,7 @@ add_library(
         SHARED
         utils.cpp)
 
-find_package(OpenCV REQUIRED core imgproc highgui calib3d)
+find_package(OpenCV 4.10 REQUIRED core imgproc highgui calib3d)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
