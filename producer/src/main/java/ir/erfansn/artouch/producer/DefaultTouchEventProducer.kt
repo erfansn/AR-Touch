@@ -107,7 +107,7 @@ class DefaultTouchEventProducer(
         .distinctUntilChanged()
 
     private infix fun Size.sameAspectRatioWith(other: Size): Boolean {
-        return (width / other.width) == (height / other.height)
+        return (width.toFloat() / height) == (other.width.toFloat() / other.height)
     }
 
     private fun calculateCenter(first: NormalizedLandmark, second: NormalizedLandmark): Point {
