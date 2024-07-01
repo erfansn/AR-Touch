@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.util.Size
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -35,6 +36,9 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.core.resolutionselector.AspectRatioStrategy
 import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.ResolutionSelector.PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE
+import androidx.camera.core.resolutionselector.ResolutionStrategy
+import androidx.camera.core.resolutionselector.ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.concurrent.futures.await
 import androidx.core.view.ViewCompat
@@ -228,14 +232,11 @@ class TouchFragment : Fragment() {
         handAnalysis = ImageAnalysis.Builder()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_BLOCK_PRODUCER)
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+            .setResolutionSelector(imageAnalysisResolutionSelector(Size(640, 480)))
             .build()
         arucoAnalysis = ImageAnalysis.Builder()
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
-            .setResolutionSelector(
-                ResolutionSelector.Builder()
-                    .setAspectRatioStrategy(AspectRatioStrategy.RATIO_16_9_FALLBACK_AUTO_STRATEGY)
-                    .build()
-            )
+            .setResolutionSelector(imageAnalysisResolutionSelector(Size(1600, 1200)))
             .build()
 
         unbindAll()
@@ -252,6 +253,18 @@ class TouchFragment : Fragment() {
         handAnalysis?.setAnalyzer(backgroundExecutor, viewModel::detectHand)
         arucoAnalysis?.setAnalyzer(backgroundExecutor, viewModel::detectArUco)
     }
+
+    private fun imageAnalysisResolutionSelector(size: Size) =
+        ResolutionSelector.Builder()
+            .setResolutionStrategy(ResolutionStrategy(size, FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER))
+            .setAspectRatioStrategy(AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY)
+            .setAllowedResolutionMode(PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE)
+            .setResolutionFilter { supportedSizes, _ ->
+                supportedSizes.filter {
+                    it.height % 16 == 0 && it.width % 16 == 0
+                }
+            }
+            .build()
 
     private fun Camera.setupFocusController() {
         val gestureDetector = GestureDetector(
