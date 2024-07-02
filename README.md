@@ -32,7 +32,7 @@ To deliver the touch event independently of the OS, I have utilized [BLE technol
 - Only one hand can be placed in the frame of the screen, so currently zooming is not available as usual.
 - Currently, the touch event is generated in line with the content displayed on the phone screen.
 
-## 🎬 Demo
+## 🎬 Demo on Youtube
 [![Youtube Demo](/media/youtube.png)](https://www.youtube.com/watch?v=woEX1JKgeAo)
 
 ## 🛠️ Technology Stack
@@ -71,7 +71,7 @@ You can see the list of tested classes [here](https://github.com/ErfanSn/AR-Touc
    2. Set OpenCV SDK directory to `sdk.dir` property.
 3. Build the project as an Android Developer.
 
-## 📚 More about
+## 📚 More about first release
 If you want to know about the process of evolution and other aspects of this project, you can read the project report.
 This project was for my undergraduate degree at the *University of Tabriz*.
 - [English version](https://docs.google.com/document/d/1ENNQMLADxYiPcoJ0-0cCe4P9LCgyyeuu/edit?usp=sharing&ouid=115301471611369797131&rtpof=true&sd=true)
