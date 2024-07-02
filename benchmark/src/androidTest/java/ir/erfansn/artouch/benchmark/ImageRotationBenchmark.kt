@@ -40,19 +40,6 @@ class ImageRotationBenchmark : KoinTest {
     val benchmarkRule = BenchmarkRule()
 
     @Test
-    fun bitmapRotationBenchmark() {
-        val imageRotationHelper = get<ImageRotationHelper>()
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val image = context.loadJpegImageAsBitmap("aruco.jpg")
-
-        benchmarkRule.measureRepeated {
-            with(imageRotationHelper) {
-                image.rotate(90)
-            }
-        }
-    }
-
-    @Test
     fun bufferRotationBenchmark() {
         val imageRotationHelper = get<ImageRotationHelper>()
         val context = InstrumentationRegistry.getInstrumentation().targetContext
