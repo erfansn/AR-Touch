@@ -34,7 +34,6 @@ import androidx.camera.core.DisplayOrientedMeteringPointFactory
 import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
-import androidx.camera.core.resolutionselector.AspectRatioStrategy
 import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.core.resolutionselector.ResolutionSelector.PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE
 import androidx.camera.core.resolutionselector.ResolutionStrategy
@@ -232,6 +231,7 @@ class TouchFragment : Fragment() {
         handAnalysis = ImageAnalysis.Builder()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_BLOCK_PRODUCER)
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+            .setOutputImageRotationEnabled(true)
             .setResolutionSelector(imageAnalysisResolutionSelector(Size(640, 480)))
             .build()
         arucoAnalysis = ImageAnalysis.Builder()
@@ -257,7 +257,6 @@ class TouchFragment : Fragment() {
     private fun imageAnalysisResolutionSelector(size: Size) =
         ResolutionSelector.Builder()
             .setResolutionStrategy(ResolutionStrategy(size, FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER))
-            .setAspectRatioStrategy(AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY)
             .setAllowedResolutionMode(PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE)
             .setResolutionFilter { supportedSizes, _ ->
                 supportedSizes.filter {

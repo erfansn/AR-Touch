@@ -26,8 +26,8 @@ import com.google.mediapipe.tasks.core.BaseOptions
 import com.google.mediapipe.tasks.core.Delegate
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker
-import ir.erfansn.artouch.producer.detector.ObjectDetector
 import ir.erfansn.artouch.common.util.Size
+import ir.erfansn.artouch.producer.detector.ObjectDetector
 import ir.erfansn.artouch.producer.detector.util.ImageRotationHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
@@ -88,21 +88,12 @@ internal class HandLandmarkerDetector(
     override fun detect(imageProxy: ImageProxy) {
         require(imageProxy.format == PixelFormat.RGBA_8888) { "Image format must be RGBA 8888." }
 
-        val frameTime = SystemClock.uptimeMillis()
-
-        // Copy out RGB bits from the frame to a bitmap buffer
-        val bitmapBuffer = imageProxy.toBitmap()
-        imageProxy.close()
-
-        val rotatedBitmap = with(imageRotationHelper) {
-            bitmapBuffer.rotate(degrees = imageProxy.imageInfo.rotationDegrees)
+        val mpImage = imageProxy.use {
+            BitmapImageBuilder(it.toBitmap()).build()
         }
 
-        // Convert the input Bitmap object to an MPImage object to run inference
-        val mpImage = BitmapImageBuilder(rotatedBitmap).build()
-
         try {
-            handLandmarker?.detectAsync(mpImage, frameTime)
+            handLandmarker?.detectAsync(mpImage, imageProxy.imageInfo.timestamp)
         } catch (e: Exception) {
             Log.w(TAG, "Trying to detect Hand Landmarks when detector has been closed!")
         }
