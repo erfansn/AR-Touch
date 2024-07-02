@@ -25,7 +25,6 @@ import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.util.Log
-import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -99,14 +98,14 @@ internal class DefaultBleHidPeripheralManager(private val context: Context) : Bl
             sdpSettings,
             null,
             BluetoothHidDeviceAppQosSettings(
-                BluetoothHidDeviceAppQosSettings.SERVICE_GUARANTEED,
-                8000,
-                800,
-                16000,
-                20,
-                5,
+                BluetoothHidDeviceAppQosSettings.SERVICE_BEST_EFFORT,
+                712, // 8 bytes * 1_000_000 us / 11250 us by github.com/ginkage/wearmouse
+                8,
+                0,
+                11250,
+                BluetoothHidDeviceAppQosSettings.MAX,
             ),
-            ContextCompat.getMainExecutor(context),
+            Runnable::run,
             object : BluetoothHidDevice.Callback() {
                 override fun onConnectionStateChanged(device: BluetoothDevice?, state: Int) {
                     if (state == BluetoothProfile.STATE_DISCONNECTING) return
