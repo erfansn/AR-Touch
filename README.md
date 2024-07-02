@@ -1,21 +1,22 @@
+[![AR Touch](/media/banner.png)](https://x.com/TensorFlow/status/1694409700069019960)
 # 🔮  AR Touch
 Obtain the power of **touchless interaction!** Being able to effortlessly navigate and interact with various screen displays **without** any physical contact, is what this project brings you.
 
-While [touchless technology](https://www.greetly.com/blog/what-is-touchless-technology) exists, it often remains out of reach for many due to its limited availability and high costs. 
+While [touchless technology](https://www.greetly.com/blog/what-is-touchless-technology) exists, it often remains out of reach for many due to its limited availability and high costs.
 Our mission with AR Touch is to bridge this gap and democratize touchless interaction for everyone.
 By implementing this ***cutting-edge technology*** only in a user-friendly Android app, we enable you to interact with any screen,
 regardless of whether it supports touch input or its dimensions.
 
 # Features
 - It is *independent of the target operating system*, that is, there is no need to install a special interface software (I already installed it for you!)
-and it has been tested on **Windows** and **Android** operating systems.
+  and it has been tested on **Windows** and **Android** operating systems.
 - All the processes are done in the device itself, so there is no need to spend extra money to buy an additional tool.
 
 # The magic behind it
-When we place our fingers on the touchscreen, occurred an interrupt to handle touch, which the operating system must handle. 
+When we place our fingers on the touchscreen, occurred an interrupt to handle touch, which the operating system must handle.
 
 Since we need to have the touch event first for the OS to handle it,
-we must first determine the touchable area. For this purpose, I have utilized [ArUco Markers](https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html) to identify the edges of the screen frame. 
+we must first determine the touchable area. For this purpose, I have utilized [ArUco Markers](https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html) to identify the edges of the screen frame.
 
 Additionally, I have used hand gestures to generate events, and for their respective computation, I have employed on-device ML-powered solutions available within the [MediaPipe framework](https://developers.google.com/mediapipe).
 
@@ -63,30 +64,34 @@ To enhance the components of the producer module, **Performance** tests have bee
 
 You can see the list of tested classes [here](https://github.com/ErfanSn/AR-Touch/issues/16).
 
+## 👷‍♂️ Steps to Build
+1. Download **NDK** version `25.2.9519653` from the SDK manager.
+2. Download and extract the [Android OpenCV SDK version 4.10](https://github.com/opencv/opencv/releases/download/4.10.0/opencv-4.10.0-android-sdk.zip).
+   1. Create the `opencv.properties` file in the root project.
+   2. Set OpenCV SDK directory to `sdk.dir` property.
+3. Build the project as an Android Developer.
+
 ## 📚 More about
-If you want to know about the process of evolution and other aspects of this project, you can read the project report. 
+If you want to know about the process of evolution and other aspects of this project, you can read the project report.
 This project was for my undergraduate degree at the *University of Tabriz*.
 - [English version](https://docs.google.com/document/d/1ENNQMLADxYiPcoJ0-0cCe4P9LCgyyeuu/edit?usp=sharing&ouid=115301471611369797131&rtpof=true&sd=true)
 - [Persian version](https://docs.google.com/document/d/1lADQhTCvIjpkDAU-ZE4bby3WU_DpsMjH/edit?usp=sharing&ouid=115301471611369797131&rtpof=true&sd=true)
 
 ## 🤝 Contributation
-I welcome and appreciate contributions from the community to improve the AR Touch project. 
-If you have any ideas, suggestions, or feedback to enhance the project, feel free to share them in the Discussions section. 
+I welcome and appreciate contributions from the community to improve the AR Touch project.
+If you have any ideas, suggestions, or feedback to enhance the project, feel free to share them in the Discussions section.
 
 You can actively participate by:
 - Opening `discussions` to propose new features or improvements.
 - Creating `new issue` to report the bugs you encounter during testing.
 - Submitting `pull requests` to introduce code enhancements or optimizations.
 
-## 💖 Sponsors and Supporters 
-Thank you for taking the time to read about the AR Touch project! If you find the project fascinating, your financial support would be truly heartwarming.
+## 💖 Sponsors and Supporters
+Thank you for considering supporting the AR Touch project! Your donation, no matter the amount, makes a significant impact and inspires us to push the boundaries of what's possible. 
+By clicking on the **Sponsor** button right now, you can become a valuable partner in the project's evolution.
 
-By clicking on the **Sponsor** button right now, you can become a valuable partner in the project's evolution. 
-Every donation, no matter the amount, makes a significant impact and inspires us to push the boundaries of what's possible. 
-
-Join us in shaping the future of touchless interactions with your generous support. Let's make magic together! 🌟
+Let's make magic together! 🌟
 
 ## 📜 License
-
 **AR Touch** is distributed under the terms of the Apache License (Version 2.0).
 See the [license](LICENSE) for more information.
