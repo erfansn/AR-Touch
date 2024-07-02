@@ -80,7 +80,7 @@ class ConfigurationViewModel(
 }
 
 sealed interface ConfigurationUiState {
-    object BluetoothDisable : ConfigurationUiState
-    object BluetoothEnable : ConfigurationUiState
-    object AdvertisingMode : ConfigurationUiState
+    data object BluetoothDisable : ConfigurationUiState
+    data object BluetoothEnable : ConfigurationUiState
+    data object AdvertisingMode : ConfigurationUiState
 }

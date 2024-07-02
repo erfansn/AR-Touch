@@ -19,14 +19,13 @@ package ir.erfansn.artouch.producer.detector.aruco
 import android.graphics.ImageFormat
 import android.util.Log
 import androidx.camera.core.ImageProxy
-import ir.erfansn.artouch.producer.detector.ObjectDetector
 import ir.erfansn.artouch.common.util.Point
 import ir.erfansn.artouch.common.util.Size
+import ir.erfansn.artouch.producer.detector.ObjectDetector
 import ir.erfansn.artouch.producer.detector.util.ImageRotationHelper
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import java.nio.ByteBuffer
-import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 
 internal class ArUcoMarkerDetector(
@@ -40,7 +39,6 @@ internal class ArUcoMarkerDetector(
     private val _result = MutableSharedFlow<ArUcoDetectionResult>(extraBufferCapacity = 1)
     override val result = _result.asSharedFlow()
 
-    @OptIn(ExperimentalTime::class)
     override fun detect(imageProxy: ImageProxy) {
         require(imageProxy.format == ImageFormat.YUV_420_888) { "Image format must be YUV 420 888." }
 

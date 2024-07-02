@@ -94,7 +94,7 @@ fun ConfigurationScreen(
     bluetoothBondedDevices: List<BondedDevice> = emptyList(),
 ) {
     var snackbarHeight by remember { mutableStateOf(0.dp) }
-    val paddingFromBottom by animateDpAsState(snackbarHeight)
+    val paddingFromBottom by animateDpAsState(snackbarHeight, label = "padding_from_bottom")
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(uiState) {
         when (uiState) {
