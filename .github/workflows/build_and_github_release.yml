@@ -35,13 +35,12 @@ jobs:
       - name: Download CMake
         run: sdkmanager --install "cmake;3.22.1"
       
-      - name: Download OpenCV SDK
-        uses: gamedev-thingy/Download-Extract@done
-        with: 
-          url: https://github.com/opencv/opencv/releases/download/4.10.0/opencv-4.10.0-android-sdk.zip
-          destination: .\opencv-sdk
-          ZIPname: opencv-4.10.0-android-sdk.zip
-
+      - name: Download and extract OpenCV SDK
+        run: |
+          curl https://github.com/opencv/opencv/releases/download/4.10.0/opencv-4.10.0-android-sdk.zip -o "$GITHUB_WORKSPACE\opencv-sdk"
+          sudo apt-get install unzip
+          unzip opencv-4.10.0-android-sdk.zip -d opencv-sdk
+          
       - name: Config OpenCV SDK
         run: echo "$GITHUB_WORKSPACE\opencv-sdk" > "opencv.properties"
  
