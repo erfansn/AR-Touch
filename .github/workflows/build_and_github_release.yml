@@ -41,7 +41,7 @@ jobs:
           unzip .\opencv-sdk.zip
           
       - name: Config OpenCV SDK
-        run: echo "sdk.dir=$GITHUB_WORKSPACE\opencv-sdk\OpenCV-android-sdk" > "opencv.properties"
+        run: echo "sdk.dir=$GITHUB_WORKSPACE/opencv-sdk/OpenCV-android-sdk" > "opencv.properties"
  
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
