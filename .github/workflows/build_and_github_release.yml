@@ -30,7 +30,7 @@ jobs:
         uses: android-actions/setup-android@00854ea68c109d98c75d956347303bf7c45b0277 # v3.2.1
 
       - name: Download Android NDK
-        run: sdkmanager --install "ndk;25.2.9519653"
+        run: sdkmanager --install "ndk;29.0.14206865"
 
       - name: Download CMake
         run: sdkmanager --install "cmake;3.22.1"
