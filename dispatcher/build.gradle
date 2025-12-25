@@ -6,7 +6,9 @@ plugins {
 
 android {
     namespace 'ir.erfansn.artouch.dispatcher'
-    compileSdk sdk.versions.compile.get().toInteger()
+    compileSdk {
+        version release(sdk.versions.compile.get().toInteger())
+    }
 
     defaultConfig {
         minSdk sdk.versions.min.get().toInteger()
@@ -21,22 +23,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = '17'
-    }
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
     implementation project(':common')
 
     implementation libs.androidx.core
-    implementation libs.kotlinx.coroutines.asProvider()
+    implementation libs.kotlinx.coroutines
     implementation libs.androidx.lifecycle.runtime
-    implementation libs.io.insert.koin.asProvider()
+    implementation libs.io.insert.koin
 
     testImplementation libs.junit4
     androidTestImplementation libs.androidx.test.ext

@@ -6,7 +6,9 @@ plugins {
 
 android {
     namespace 'ir.erfansn.artouch'
-    compileSdk sdk.versions.compile.get().toInteger()
+    compileSdk {
+        version release(sdk.versions.compile.get().toInteger())
+    }
 
     defaultConfig {
         applicationId "ir.erfansn.artouch"
@@ -40,13 +42,6 @@ android {
             signingConfig signingConfigs.release
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = '17'
-    }
     buildFeatures {
         viewBinding true
         compose true
@@ -68,6 +63,10 @@ android {
     }
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 dependencies {
     implementation project(':common')
     implementation project(':producer')
@@ -76,7 +75,7 @@ dependencies {
     implementation libs.androidx.core
     implementation libs.androidx.appcompat
     implementation libs.androidx.concurrent.futures
-    implementation libs.androidx.fragment.asProvider()
+    implementation libs.androidx.fragment
     // To prevent ListenableFuture conflict this dependency temporary is added
     implementation 'com.google.guava:guava:29.0-android'
 
@@ -88,6 +87,7 @@ dependencies {
     def composeBom = platform(libs.androidx.compose.bom)
     implementation composeBom
     implementation libs.androidx.compose.material3
+    implementation libs.androidx.compose.material.icons.core
     implementation libs.androidx.compose.ui.tooling.preview
     implementation libs.androidx.constraintlayout.compose
     implementation libs.androidx.activity.compose
@@ -95,11 +95,11 @@ dependencies {
 
     implementation libs.google.accompanist.themeadapter.m3
 
-    implementation libs.io.insert.koin.asProvider()
+    implementation libs.io.insert.koin
     implementation libs.io.insert.koin.compose
 
     testImplementation libs.junit4
-    testImplementation libs.io.insert.koin.test.asProvider()
+    testImplementation libs.io.insert.koin.test
     testImplementation libs.io.insert.koin.test.junit4
     testImplementation libs.robolectric
     testImplementation libs.androidx.test.rules
@@ -113,7 +113,7 @@ dependencies {
     androidTestImplementation libs.androidx.test.uiautomator
 
     debugImplementation libs.androidx.compose.ui.test.manifest
-    debugImplementation libs.androidx.compose.ui.tooling.asProvider()
+    debugImplementation libs.androidx.compose.ui.tooling
 
     androidTestUtil libs.androidx.test.orchestrator
 }

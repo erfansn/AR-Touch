@@ -54,9 +54,8 @@ class HandDetectorBenchmark : KoinTest {
 
         benchmarkRule.measureRepeated {
             runBlocking {
-                val result = launch { handLandmarkerDetector.result.first() }
-                runWithTimingDisabled { delay(1000) }
-                handLandmarkerDetector.detect(handImage)
+                val result = launch { handLandmarkerDetector.detect(handImage) }
+                runWithMeasurementDisabled { delay(1000) }
                 result.join()
             }
         }

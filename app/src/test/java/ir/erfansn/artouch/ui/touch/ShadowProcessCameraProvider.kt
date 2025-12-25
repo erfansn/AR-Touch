@@ -51,15 +51,7 @@ class ShadowProcessCameraProvider {
                 TODO("Not yet implemented")
             }
 
-            override fun getCameraInternals(): LinkedHashSet<CameraInternal> {
-                TODO("Not yet implemented")
-            }
-
             override fun getExtendedConfig(): CameraConfig {
-                TODO("Not yet implemented")
-            }
-
-            override fun setExtendedConfig(p0: CameraConfig?) {
                 TODO("Not yet implemented")
             }
         }

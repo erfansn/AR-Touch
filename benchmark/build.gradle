@@ -6,7 +6,9 @@ plugins {
 
 android {
     namespace 'ir.erfansn.artouch.benchmark'
-    compileSdk sdk.versions.compile.get().toInteger()
+    compileSdk {
+        version release(sdk.versions.compile.get().toInteger())
+    }
 
     defaultConfig {
         minSdk sdk.versions.min.get().toInteger()
@@ -27,14 +29,10 @@ android {
             isDefault = true
         }
     }
+}
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
@@ -46,7 +44,7 @@ dependencies {
     androidTestImplementation libs.androidx.test.core
     androidTestImplementation libs.androidx.test.runner
     androidTestImplementation libs.androidx.benchmark
-    androidTestImplementation libs.io.insert.koin.test.asProvider()
+    androidTestImplementation libs.io.insert.koin.test
     androidTestImplementation libs.io.insert.koin.test.junit4
     androidTestImplementation libs.kotlinx.coroutines.test
 }

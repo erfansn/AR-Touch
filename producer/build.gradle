@@ -5,7 +5,9 @@ plugins {
 
 android {
     namespace 'ir.erfansn.artouch.producer'
-    compileSdk sdk.versions.compile.get().toInteger()
+    compileSdk {
+        version release(sdk.versions.compile.get().toInteger())
+    }
 
     defaultConfig {
         minSdk sdk.versions.min.get().toInteger()
@@ -26,7 +28,7 @@ android {
                 ]
             }
         }
-        ndkVersion = "25.2.9519653"
+        ndkVersion = "29.0.14206865"
     }
 
     buildTypes {
@@ -36,13 +38,6 @@ android {
 
             externalNativeBuild.cmake.arguments "-DCMAKE_BUILD_TYPE=Release"
         }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = '17'
     }
 
     externalNativeBuild {
@@ -58,14 +53,18 @@ android {
     }
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 dependencies {
     implementation project(':common')
 
     implementation libs.androidx.core
     implementation libs.androidx.camera.core
     implementation libs.google.mediapipe.tasks.vision
-    implementation libs.kotlinx.coroutines.asProvider()
-    implementation libs.io.insert.koin.asProvider()
+    implementation libs.kotlinx.coroutines
+    implementation libs.io.insert.koin
 
     testImplementation libs.junit4
     testImplementation libs.kotlinx.coroutines.test

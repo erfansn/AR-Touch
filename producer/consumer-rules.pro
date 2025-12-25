@@ -1,3 +1,6 @@
 -keep class com.google.mediapipe.proto.** { *; }
 -keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite { *; }
 -keep class com.google.common.flogger.** { *; }
+-keep class com.google.mediapipe.framework.** { *; }
+-dontwarn com.google.mediapipe.proto.CalculatorProfileProto$CalculatorProfile
+-dontwarn com.google.mediapipe.proto.GraphTemplateProto$CalculatorGraphTemplate
