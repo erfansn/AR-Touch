@@ -8,5 +8,6 @@
   ],
   "ignoreDeps": [
     "com.google.guava:guava"
-  ]
+  ],
+  "enabled": false
 }
